@@ -2,98 +2,97 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MASTER HUB DASHBOARD - FULL CONTROL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DASHBOARD - SMART SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>body { font-family: 'Kanit', sans-serif; }</style>
+    <style>
+        body { font-family: 'Kanit', sans-serif; overflow-x: hidden; }
+        /* ปรับความชิดของแถวตาราง */
+        .tight-table td { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+        .tight-table th { padding: 0.75rem !important; font-size: 10px !important; }
+        /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-10 font-['Kanit']">
+<body class="bg-[#f8fafc] min-h-screen font-['Kanit']">
 
-    <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+    <div class="w-full max-w-6xl mx-auto px-3 py-6 md:px-10 md:py-10">
+        <div class="flex flex-col gap-4 mb-6">
             <div>
-                <h1 class="text-3xl font-bold text-slate-800 uppercase tracking-tighter italic text-blue-600">Master Hub Dashboard</h1>
-                <p class="text-slate-400 font-bold text-[10px] uppercase tracking-[0.4em] mt-1">Full Control: Project A, B, C, D Management</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800 uppercase tracking-tighter italic leading-none">
+                    Master Hub <span class="text-blue-600">Dashboard</span>
+                </h1>
+                <p class="text-slate-400 font-bold text-[8px] md:text-[10px] uppercase tracking-[0.2em] mt-1">
+                    System Management Control
+                </p>
             </div>
-            <select id="projectSelect" onchange="init()" class="p-4 bg-white rounded-2xl shadow-sm border-none font-bold text-xs uppercase cursor-pointer ring-1 ring-slate-100">
-                <option value="all">🌐 แสดงทุกโครงการ (A, B, C, D)</option>
+            
+            <select id="projectSelect" onchange="init()" class="w-full p-3 bg-white rounded-xl shadow-sm border border-slate-100 font-bold text-xs uppercase cursor-pointer outline-none ring-blue-50 focus:ring-4">
+                <option value="all">🌐 All Projects (A, B, C, D)</option>
                 <option value="Project_Master">⭐ Master Hub (HP-Z)</option>
-                <option value="Project_A">Unit Project A (HP-A)</option>
-                <option value="Project_B">Unit Project B (HP-B)</option>
-                <option value="Project_C">Unit Project C (HP-C)</option>
-                <option value="Project_D">Unit Project D (HP-D)</option>
+                <option value="Project_A">Project A (HP-A)</option>
+                <option value="Project_B">Project B (HP-B)</option>
+                <option value="Project_D">Project D (HP-D)</option>
             </select>
         </div>
 
-        <div class="relative mb-8 group">
-            <i class="fa-solid fa-magnifying-glass absolute left-6 top-5 text-slate-300 group-focus-within:text-blue-600 transition-colors"></i>
-            <input type="text" id="searchInput" oninput="filterTable()" placeholder="ค้นหารหัสบ้าน หรือ ชื่อยูนิต..." class="w-full pl-14 pr-6 py-4 bg-white rounded-2xl shadow-sm outline-none border border-slate-100 focus:ring-4 ring-blue-50 transition-all font-bold italic text-sm">
+        <div class="relative mb-6 group">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-300 text-xs"></i>
+            <input type="text" id="searchInput" oninput="filterTable()" placeholder="ค้นหารหัส หรือ ชื่อยูนิต..." class="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-sm outline-none border border-slate-100 focus:ring-4 ring-blue-50 transition-all font-bold text-xs">
         </div>
 
-        <div id="tableContainer" class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100 animate-fade-in">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-900 text-white text-[10px] uppercase tracking-widest font-bold italic">
+        <div class="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-xl overflow-hidden border border-slate-100">
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse tight-table">
+                    <thead class="bg-[#0f172a] text-white uppercase tracking-widest font-bold italic">
                         <tr>
-                            <th class="p-8">Unit ID</th>
-                            <th class="p-8">Property Name</th>
-                            <th class="p-8">Type/Plot</th>
-                            <th class="p-8 text-center">System Status</th>
-                            <th class="p-8 text-center">Action</th>
+                            <th class="whitespace-nowrap">ID</th>
+                            <th class="whitespace-nowrap">Property Name</th>
+                            <th class="text-center whitespace-nowrap">Status</th>
+                            <th class="text-center whitespace-nowrap">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="unitTableBody" class="text-slate-600 text-sm italic font-medium text-center">
-                        <tr><td colspan="5" class="p-20 animate-pulse text-slate-400 font-bold">⏳ กำลังซิงค์ข้อมูลจากทุกโครงการ...</td></tr>
+                    <tbody id="unitTableBody" class="text-slate-600 text-[11px] md:text-sm italic font-medium">
+                        <tr><td colspan="4" class="p-10 text-center animate-pulse">⏳ Syncing Data...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <div id="editModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-[3.5rem] p-10 md:p-14 relative shadow-2xl border-t-[15px] border-blue-600 animate-in fade-in duration-300">
-            <button onclick="closeEdit()" class="absolute top-10 right-10 text-slate-200 hover:text-red-500 transition-colors text-4xl">
+    <div id="editModal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-2">
+        <div class="bg-white w-full max-w-4xl max-h-[95vh] overflow-y-auto rounded-[2rem] p-6 md:p-12 relative shadow-2xl border-t-[10px] border-blue-600 animate-in fade-in zoom-in duration-200">
+            <button onclick="closeEdit()" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 text-2xl">
                 <i class="fa-solid fa-circle-xmark"></i>
             </button>
-            <h2 class="text-3xl font-bold text-slate-800 mb-2 uppercase italic italic">🛠️ Edit Unit: <span id="editingId" class="text-blue-600 underline"></span></h2>
-            <p class="text-slate-400 text-[10px] uppercase mb-12 font-bold tracking-widest italic border-b pb-6 italic">Master Full Control - การแก้ไขสถานะและข้อมูลรูปภาพเชิงลึก</p>
-            <div id="formContent" class="space-y-10">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="col-span-full space-y-2 italic">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-4">Property Name</label>
-                        <input type="text" id="idName" class="w-full p-6 bg-slate-50 rounded-2xl outline-none shadow-inner border-none font-bold text-slate-800">
+            <h2 class="text-xl font-bold text-slate-800 mb-6 uppercase italic">🛠️ Unit: <span id="editingId" class="text-blue-600 underline"></span></h2>
+            
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">Name</label>
+                        <input type="text" id="idName" class="w-full p-4 bg-slate-50 rounded-xl outline-none border-none shadow-inner font-bold text-sm">
                     </div>
-                    <div class="space-y-2 italic">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-4">Price (฿)</label>
-                        <input type="number" id="price" class="w-full p-6 bg-blue-50 text-blue-700 font-bold rounded-2xl outline-none border-none shadow-inner text-2xl">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">Price</label>
+                        <input type="number" id="price" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none border-none shadow-inner text-lg">
                     </div>
-                    <div class="space-y-2 italic">
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-4">System Status</label>
-                        <select id="sysStatus" class="w-full p-6 rounded-2xl font-bold shadow-sm border-none outline-none cursor-pointer">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">Status</label>
+                        <select id="sysStatus" class="w-full p-4 rounded-xl font-bold shadow-sm border-none outline-none text-sm appearance-none bg-white border border-slate-100">
                             <option value="Pending">🟡 Pending</option>
                             <option value="Live">🟢 Live</option>
                             <option value="Sold">🔴 Sold</option>
-                            <option value="Inactive">⚪ Inactive</option>
                         </select>
                     </div>
                 </div>
-                <button onclick="saveToMaster()" id="btnSave" class="w-full bg-slate-900 text-white py-7 rounded-[2.5rem] font-bold uppercase tracking-[0.3em] shadow-2xl hover:bg-blue-600 transition-all flex justify-center items-center italic active:scale-95">
-                    <i class="fa-solid fa-floppy-disk mr-4 text-xl"></i> บันทึกข้อมูลและอัปเดต MASTER
+                
+                <button onclick="saveToMaster()" id="btnSave" class="w-full bg-[#0f172a] text-white py-5 rounded-2xl font-bold uppercase tracking-widest shadow-lg hover:bg-blue-600 transition-all active:scale-95 text-xs italic">
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> Save to Master
                 </button>
             </div>
-        </div>
-    </div>
-
-    <div id="popOK" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center z-[100] backdrop-blur-xl">
-        <div class="bg-white rounded-[3.5rem] p-12 max-w-sm w-full text-center shadow-2xl border-t-8 border-green-500 scale-in">
-            <div class="w-24 h-24 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
-                <i class="fa-solid fa-check-double text-4xl"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-slate-800 mb-2 uppercase italic tracking-tighter">SUCCESSFUL!</h2>
-            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-10 italic font-bold">ข้อมูล MASTER <br>ได้รับการอัปเดตเรียบร้อย</p>
-            <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase hover:bg-green-600 transition-all text-[10px] tracking-widest italic">ตกลง</button>
         </div>
     </div>
 
@@ -102,43 +101,38 @@
         let allData = [];
 
         async function init() {
-            const project = document.getElementById('projectSelect').value;
+            const proj = document.getElementById('projectSelect').value;
             const tbody = document.getElementById('unitTableBody');
-            
             try {
-                // เรียกข้อมูลโดยส่ง project เข้าไป (ถ้า Master เลือก all ระบบจะดึงครบทุกโครงการ)
-                const res = await fetch(`${API_URL}?mode=getUnitList&project=${project}`); 
+                const res = await fetch(`${API_URL}?mode=getUnitList&project=${proj}`);
                 allData = await res.json();
                 renderTable(allData);
-            } catch (e) { tbody.innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 font-bold'>❌ การเชื่อมต่อฐานข้อมูลล้มเหลว</td></tr>"; }
-        }
-
-        // 🛠️ ระบบ Search ที่ทำงานร่วมกับตาราง
-        function filterTable() {
-            const term = document.getElementById('searchInput').value.toUpperCase();
-            const filtered = allData.filter(u => 
-                (u.id && u.id.toUpperCase().includes(term)) || 
-                (u.name && u.name.toUpperCase().includes(term))
-            );
-            renderTable(filtered);
+            } catch (e) { tbody.innerHTML = "<tr><td colspan='4' class='p-10 text-red-400 text-center font-bold text-xs'>❌ Connection Error</td></tr>"; }
         }
 
         function renderTable(data) {
             const tbody = document.getElementById('unitTableBody');
-            if (data.length === 0) { tbody.innerHTML = "<tr><td colspan='5' class='p-10 italic'>ไม่พบข้อมูลที่ค้นหา</td></tr>"; return; }
+            if (data.length === 0) { tbody.innerHTML = "<tr><td colspan='4' class='p-10 text-center italic'>ไม่พบข้อมูล</td></tr>"; return; }
             
             tbody.innerHTML = data.map(u => `
-                <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                    <td class="p-8 font-bold text-slate-900 italic">${u.id || '-'}</td>
-                    <td class="p-8 italic font-bold text-slate-500">${u.name || '-'}</td>
-                    <td class="p-8 text-[10px] font-bold uppercase text-slate-400 tracking-widest">${u.id ? u.id.split('-')[1] : '-'}</td>
-                    <td class="p-8 text-center"><span class="px-4 py-1.5 rounded-full text-[9px] font-bold uppercase italic shadow-sm ${getStatusClass(u.status)}">${u.status || 'Pending'}</span></td>
-                    <td class="p-8 text-center"><button onclick="openEdit('${u.id}', '${u.project}')" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase hover:bg-slate-900 transition-all italic shadow-sm active:scale-90 italic">MANAGE</button></td>
+                <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                    <td class="font-bold text-slate-900">${u.id || '-'}</td>
+                    <td class="font-bold text-slate-500 truncate max-w-[120px]">${u.name || '-'}</td>
+                    <td class="text-center">
+                        <span class="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase ${getStatusClass(u.status)} shadow-sm">
+                            ${u.status || 'PND'}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="openEdit('${u.id}', '${u.project}')" class="bg-blue-600 text-white p-2 rounded-lg text-[9px] font-bold uppercase shadow-md active:scale-90">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </td>
                 </tr>`).join('');
         }
 
         function getStatusClass(s) {
-            if (s === 'Live' || s === 'Active' || s === 'Online') return 'bg-green-100 text-green-600';
+            if (s === 'Live' || s === 'Online') return 'bg-green-100 text-green-600';
             if (s === 'Sold') return 'bg-red-100 text-red-600';
             return 'bg-yellow-100 text-yellow-600';
         }
@@ -146,22 +140,27 @@
         async function openEdit(id, project) {
             window.currentProject = project;
             document.getElementById('editingId').innerText = id;
-            document.getElementById('editModal').classList.replace('hidden', 'flex');
-            
+            document.getElementById('editModal').classList.remove('hidden');
             const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
-            const data = await res.json();
-            document.getElementById('idName').value = data.ID_NAME || "";
-            document.getElementById('price').value = data.Price || 0;
-            document.getElementById('sysStatus').value = data.System_Status || "Pending";
+            const d = await res.json();
+            document.getElementById('idName').value = d.ID_NAME || "";
+            document.getElementById('price').value = d.Price || 0;
+            document.getElementById('sysStatus').value = d.System_Status || "Pending";
         }
 
-        function closeEdit() { document.getElementById('editModal').classList.replace('flex', 'hidden'); }
+        function filterTable() {
+            const term = document.getElementById('searchInput').value.toUpperCase();
+            renderTable(allData.filter(u => 
+                (u.id && u.id.toUpperCase().includes(term)) || (u.name && u.name.toUpperCase().includes(term))
+            ));
+        }
+
+        function closeEdit() { document.getElementById('editModal').classList.add('hidden'); }
 
         async function saveToMaster() {
             const btn = document.getElementById('btnSave');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-3"></i> Syncing to MASTER...';
-            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving...';
             const payload = {
                 project: window.currentProject,
                 hpId: document.getElementById('editingId').innerText,
@@ -170,11 +169,10 @@
                 sysStatus: document.getElementById('sysStatus').value,
                 files: []
             };
-
             try {
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                document.getElementById('popOK').classList.replace('hidden', 'flex');
-            } catch (e) { alert("ล้มเหลว"); btn.disabled = false; }
+                location.reload();
+            } catch (e) { alert("Error"); btn.disabled = false; }
         }
 
         window.onload = init;
