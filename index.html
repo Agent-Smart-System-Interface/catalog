@@ -9,11 +9,13 @@
     <style>body { font-family: 'Kanit', sans-serif; }</style>
 </head>
 <body class="bg-slate-50 min-h-screen">
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-xl md:text-2xl font-bold text-slate-800 uppercase">Agent Smart System <span class="text-blue-600">Master Hub</span></h1>
-            <select id="projectFilter" onchange="filterData()" class="p-3 bg-slate-100 rounded-xl outline-none border-none text-sm font-bold">
-                <option value="all">แสดงทั้งหมด (All Projects)</option>
+    <header class="bg-white shadow-sm sticky top-0 z-50 py-6">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 uppercase tracking-tighter">
+                Agent Smart System <span class="text-blue-600">Master Hub</span>
+            </h1>
+            <select id="projectFilter" onchange="filterData()" class="p-3 bg-slate-100 rounded-xl outline-none border-none text-xs font-bold">
+                <option value="all">แสดงบ้านทั้งหมด (All Projects)</option>
                 <option value="Project_Master">⭐ Master Hub (HP-Z)</option>
                 <option value="Project_A">Project A (HP-A)</option>
                 <option value="Project_B">Project B (HP-B)</option>
@@ -24,42 +26,44 @@
     </header>
 
     <main class="container mx-auto px-4 py-10">
-        <div id="loading" class="text-center py-20 text-slate-400 animate-pulse">กำลังเชื่อมต่อฐานข้อมูล...</div>
+        <div id="loading" class="text-center py-20 text-slate-400 animate-pulse">กำลังดึงข้อมูลฐานข้อมูลอสังหาฯ...</div>
         <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <script>
-        // 🛑 ใส่ URL ของคุณที่นี่
+        // 🛑 ใส่ URL สคริปต์ของคุณที่นี่
         const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec"; 
 
         let rawData = [];
 
         async function init() {
             try {
+                // ดึงข้อมูลรวม (all)
                 const res = await fetch(`${API_URL}?action=getPublicCatalog&project=all`);
                 const json = await res.json();
                 if (json.status === "success") {
                     rawData = json.data;
                     render(rawData);
                 }
-            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ ไม่สามารถดึงข้อมูลได้ โปรดตรวจสอบ API URL"; }
+            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ เชื่อมต่อระบบไม่ได้ โปรดตรวจสอบ API URL"; }
         }
 
         function render(items) {
             const grid = document.getElementById('grid');
             document.getElementById('loading').style.display = 'none';
-            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center text-slate-400'>ยังไม่มีข้อมูลที่ออนไลน์ในขณะนี้</p>"; return; }
+            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center text-slate-400 py-20 uppercase font-bold text-xs'>ยังไม่มีรายการบ้านที่เปิดให้แสดงผล</p>"; return; }
+            
             grid.innerHTML = items.map(i => `
-                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all">
-                    <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400'}" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">${i.Project_Source || i.Project_Name}</span>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase">${i.HP_ID}</span>
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all group">
+                    <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400'}" class="w-full h-60 object-cover group-hover:scale-105 transition-all duration-500">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4 uppercase font-bold text-[10px] tracking-widest">
+                            <span class="text-blue-500">${i.Project_Source || i.Project_Name}</span>
+                            <span class="text-slate-300">${i.HP_ID}</span>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2 truncate">${i.ID_NAME}</h3>
                         <p class="text-2xl font-bold text-blue-600 mb-6">฿${Number(i.Price || 0).toLocaleString()}</p>
-                        <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-blue-600 transition-colors">รายละเอียดเชิงลึก</button>
+                        <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs hover:bg-blue-600 transition-all">ดูข้อมูลเชิงลึก</button>
                     </div>
                 </div>
             `).join('');
