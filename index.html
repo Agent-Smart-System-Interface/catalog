@@ -23,13 +23,12 @@
     </header>
 
     <main class="container mx-auto px-4 py-10">
-        <div id="loading" class="text-center py-20 text-slate-400 animate-pulse">กำลังดึงข้อมูลฐานข้อมูล...</div>
+        <div id="loading" class="text-center py-20 text-slate-400">กำลังเชื่อมต่อฐานข้อมูล...</div>
         <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
     <script>
-        // 🛑 สำคัญ: แทนที่ด้วย URL ของคุณที่ได้จากการ Deploy
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; //
 
         let rawData = [];
         async function init() {
@@ -40,13 +39,13 @@
                     rawData = json.data;
                     render(rawData);
                 }
-            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ เชื่อมต่อระบบไม่ได้ โปรดตรวจสอบ API URL ในโค้ด"; }
+            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ เชื่อมต่อล้มเหลว"; }
         }
 
         function render(items) {
             const grid = document.getElementById('grid');
             document.getElementById('loading').style.display = 'none';
-            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center py-20 text-slate-400'>ยังไม่มีรายการบ้านที่สถานะ Online</p>"; return; }
+            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center py-20 text-slate-400'>ยังไม่มีรายการบ้านที่ออนไลน์</p>"; return; }
             grid.innerHTML = items.map(i => `
                 <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all">
                     <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400'}" class="w-full h-56 object-cover">
@@ -57,11 +56,12 @@
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2 truncate">${i.ID_NAME}</h3>
                         <p class="text-2xl font-bold text-blue-600 mb-4">฿${Number(i.Price || 0).toLocaleString()}</p>
-                        <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs">ดูข้อมูลเชิงลึก</button>
+                        <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs">ดูรายละเอียด</button>
                     </div>
                 </div>
             `).join('');
         }
+
         function filterData() {
             const val = document.getElementById('projectFilter').value;
             render(val === 'all' ? rawData : rawData.filter(i => i.Project_Source === val));
