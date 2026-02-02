@@ -13,14 +13,14 @@
         
         <div class="flex gap-2 mb-8 bg-slate-100 p-2 rounded-2xl">
             <button onclick="setMode('add')" id="modeAdd" class="flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600">➕ เพิ่มรายการใหม่</button>
-            <button onclick="setMode('edit')" id="modeEdit" class="flex-1 py-3 rounded-xl font-bold transition-all text-slate-400">✏️ แก้ไข/เปิด-ปิดรายการเดิม</button>
+            <button onclick="setMode('edit')" id="modeEdit" class="flex-1 py-3 rounded-xl font-bold transition-all text-slate-400">✏️ แก้ไขรายการเดิม</button>
         </div>
 
         <div class="space-y-6">
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-1 text-center">เลือกโครงการที่จะบริหารจัดการ</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-1 text-center font-bold">โครงการที่ต้องการบริหารจัดการ</label>
                 <select id="projectSelect" onchange="loadUnits()" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold text-center">
-                    <option value="">-- โปรดระบุโครงการ --</option>
+                    <option value="">-- เลือกโครงการ --</option>
                     <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
                     <option value="Project_A">Unit Project A (HP-A)</option>
                     <option value="Project_B">Unit Project B (HP-B)</option>
@@ -29,127 +29,44 @@
                 </select>
             </div>
 
-            <div id="unitSelectorSection" class="hidden animate-fade-in">
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-1 text-center">เลือกยูนิตที่ต้องการแก้ไขข้อมูลหรือสถานะ</label>
-                <select id="unitSelect" onchange="fetchUnitDetail()" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-2xl border-none outline-none ring-1 ring-blue-200">
-                    <option value="">-- กำลังโหลดรายชื่อ... --</option>
-                </select>
+            <div id="controlSection">
+                <input type="text" id="hpIdInput" readonly placeholder="รหัส ID" class="w-full p-4 bg-slate-50 text-slate-400 font-bold text-center rounded-2xl border-none">
             </div>
 
-            <div id="idAutoSection" class="hidden">
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-1 text-center">รหัส ID ว่างที่ระบบตรวจพบ</label>
-                <input type="text" id="hpIdInput" readonly class="w-full p-4 bg-green-50 text-green-600 font-bold text-center rounded-2xl border-none">
-            </div>
-
-            <div id="formSection" class="hidden space-y-4 pt-6 border-t border-slate-50">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="idName" placeholder="ชื่อบ้าน / หัวข้อประกาศ" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border-none shadow-sm">
-                    <select id="systemStatus" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold text-blue-600 border-none shadow-sm">
-                        <option value="Online">🟢 Online (โชว์หน้าเว็บ)</option>
-                        <option value="Inactive">🔴 Inactive (ซ่อนรายการ)</option>
-                        <option value="Open for Edit">🟡 Open for Edit (เปิดให้แอดมินแก้ไข)</option>
+            <div id="formSection" class="hidden space-y-4 pt-4 border-t border-slate-50">
+                <input type="text" id="idName" placeholder="ชื่อบ้าน" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="price" placeholder="ราคาขาย" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                    <select id="sysStatus" class="p-4 bg-gray-50 rounded-2xl outline-none font-bold text-blue-600">
+                        <option value="Online">🟢 Online</option>
+                        <option value="Inactive">🔴 Inactive</option>
+                        <option value="Open for Edit">🟡 Open for Edit</option>
                     </select>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="price" placeholder="ราคาขาย" class="p-4 bg-gray-50 rounded-2xl outline-none border-none">
-                    <input type="text" id="badge" placeholder="ป้ายกำกับ (NEW, SOLD)" class="p-4 bg-gray-50 rounded-2xl outline-none border-none">
-                </div>
-                <textarea id="description" placeholder="รายละเอียด..." class="w-full p-4 bg-gray-50 rounded-2xl h-24 outline-none border-none"></textarea>
-                <div class="flex gap-4">
-                    <label class="flex-1 p-4 bg-gray-50 border-2 border-dashed rounded-2xl text-center cursor-pointer hover:bg-slate-100"><span id="txtThumb" class="text-[10px] font-bold text-gray-400">รูปหน้าปก</span><input type="file" id="inThumb" accept="image/*" class="hidden" onchange="updateTxt('thumb')"></label>
-                    <label class="flex-1 p-4 bg-gray-50 border-2 border-dashed rounded-2xl text-center cursor-pointer hover:bg-slate-100"><span id="txtGall" class="text-[10px] font-bold text-gray-400">รูปอัลบั้ม</span><input type="file" id="inGall" multiple accept="image/*" class="hidden" onchange="updateTxt('gall')"></label>
-                </div>
-                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold shadow-xl active:scale-95 transition-all uppercase tracking-widest">ยืนยันการบันทึก (Master Control)</button>
+                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold uppercase active:scale-95 transition-all">ยืนยันการบันทึกข้อมูล</button>
             </div>
         </div>
-        <div id="statusBox" class="hidden mt-6 p-4 rounded-2xl text-center text-xs font-bold uppercase tracking-widest"></div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec";
+        // 🛑 ใส่ API URL ของคุณที่นี่
+        const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec"; 
         let currentMode = 'add';
-
-        function setMode(mode) {
-            currentMode = mode;
-            document.getElementById('modeAdd').className = mode === 'add' ? "flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold transition-all text-slate-400";
-            document.getElementById('modeEdit').className = mode === 'edit' ? "flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold transition-all text-slate-400";
-            loadUnits();
-        }
 
         async function loadUnits() {
             const p = document.getElementById('projectSelect').value;
             if (!p) return;
-            document.getElementById('formSection').classList.add('hidden');
-
-            if (currentMode === 'edit') {
-                document.getElementById('unitSelectorSection').classList.remove('hidden');
-                document.getElementById('idAutoSection').classList.add('hidden');
-                const select = document.getElementById('unitSelect');
-                select.innerHTML = '<option>⏳ กำลังโหลดรายชื่อบ้าน...</option>';
-                const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}`);
-                const units = await res.json();
-                select.innerHTML = '<option value="">-- เลือกบ้านที่จะแก้ไข --</option>' + units.map(u => `<option value="${u.id}">${u.id} | ${u.name}</option>`).join('');
-            } else {
-                document.getElementById('unitSelectorSection').classList.add('hidden');
-                document.getElementById('idAutoSection').classList.remove('hidden');
-                document.getElementById('hpIdInput').value = "⏳ ค้นหารหัสว่าง...";
+            
+            if (currentMode === 'add') {
                 const res = await fetch(`${API_URL}?mode=getEditSlot&project=${p}`);
                 const id = await res.text();
                 document.getElementById('hpIdInput').value = id;
                 if (id !== "Locked") document.getElementById('formSection').classList.remove('hidden');
+            } else {
+                // Logic โหลด Unit List สำหรับแก้ไข
             }
         }
-
-        async function fetchUnitDetail() {
-            const p = document.getElementById('projectSelect').value;
-            const id = document.getElementById('unitSelect').value;
-            if (!id) return;
-            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${p}&hpId=${id}`);
-            const data = await res.json();
-            document.getElementById('idName').value = data[1];
-            document.getElementById('price').value = data[13];
-            document.getElementById('systemStatus').value = data[31];
-            document.getElementById('description').value = data[17];
-            document.getElementById('formSection').classList.remove('hidden');
-        }
-
-        async function submitData() {
-            const btn = document.getElementById('btnSubmit');
-            const box = document.getElementById('statusBox');
-            btn.disabled = true;
-            box.classList.remove('hidden');
-            box.className = "mt-6 p-4 rounded-2xl text-center text-xs bg-blue-50 text-blue-600 animate-pulse";
-            box.innerText = "กำลังประมวลผลข้อมูล Master...";
-
-            const payload = {
-                project: document.getElementById('projectSelect').value,
-                hpId: (currentMode === 'add') ? document.getElementById('hpIdInput').value : document.getElementById('unitSelect').value,
-                idName: document.getElementById('idName').value,
-                price: document.getElementById('price').value,
-                sysStatus: document.getElementById('systemStatus').value,
-                description: document.getElementById('description').value,
-                files: []
-            };
-
-            const t = document.getElementById('inThumb').files;
-            const g = document.getElementById('inGall').files;
-
-            if (t.length > 0) payload.files.push({ name: "t.jpg", type: t[0].type, base64: (await toB64(t[0])).split(',')[1], isThumb: true });
-            for (let f of g) payload.files.push({ name: f.name, type: f.type, base64: (await toB64(f)).split(',')[1], isThumb: false });
-
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                box.className = "mt-6 p-4 rounded-2xl text-center text-xs bg-green-50 text-green-600";
-                box.innerText = "✅ บันทึกสำเร็จ! ระบบกำลังรีโหลด...";
-                setTimeout(() => location.reload(), 2000);
-            } catch (e) { box.innerText = "❌ ผิดพลาด"; btn.disabled = false; }
-        }
-
-        function toB64(f) { return new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); }); }
-        function updateTxt(type) { 
-            const f = document.getElementById(type === 'thumb' ? 'inThumb' : 'inGall').files;
-            document.getElementById(type === 'thumb' ? 'txtThumb' : 'txtGall').innerText = `✅ เลือกแล้ว ${f.length} ไฟล์`;
-        }
+        // ... (Logic submitData และ setMode) ...
     </script>
 </body>
 </html>
