@@ -2,14 +2,14 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>MASTER FULL CONTROL V10.0</title>
+    <title>MASTER FULL CONTROL V11.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <style>body { font-family: 'Kanit', sans-serif; }</style>
 </head>
-<body class="bg-slate-100 min-h-screen p-4 flex items-center justify-center font-['Kanit']">
+<body class="bg-slate-100 min-h-screen p-4 flex items-center justify-center">
     <div class="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl p-10">
-        <h1 class="text-2xl font-bold text-center text-slate-800 mb-8 uppercase tracking-widest italic">MASTER FULL CONTROL V10.0</h1>
+        <h1 class="text-2xl font-bold text-center text-slate-800 mb-8 uppercase tracking-widest">Master Full Control</h1>
         
         <div class="flex gap-2 mb-8 bg-slate-100 p-2 rounded-2xl">
             <button onclick="switchMode('add')" id="btnAdd" class="flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600">➕ เพิ่มรายการใหม่</button>
@@ -17,33 +17,29 @@
         </div>
 
         <div class="space-y-6">
-            <select id="projectSelect" onchange="loadData()" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-center ring-1 ring-slate-100">
+            <select id="projectSelect" onchange="loadData()" class="w-full p-4 bg-slate-50 rounded-2xl border-none font-bold text-center">
                 <option value="">-- โปรดระบุโครงการ --</option>
                 <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
                 <option value="Project_A">Project A (HP-A)</option>
                 <option value="Project_B">Project B (HP-B)</option>
-                <option value="Project_C">Project C (HP-C)</option>
-                <option value="Project_D">Project D (HP-D)</option>
+                <option value="Project_C">Unit Project C (HP-C)</option>
+                <option value="Project_D">Unit Project D (HP-D)</option>
             </select>
 
-            <div id="idSection" class="space-y-4">
-                <div id="unitSelector" class="hidden animate-fade-in">
-                    <select id="unitList" onchange="fetchDetail()" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-2xl outline-none ring-1 ring-blue-200"></select>
-                </div>
-                <div id="autoIdDisplay" class="bg-green-50 p-4 rounded-2xl border-2 border-dashed border-green-200 text-center">
-                    <input type="text" id="hpIdInput" readonly class="bg-transparent text-2xl font-bold text-green-600 text-center w-full outline-none">
-                </div>
+            <div id="unitSelector" class="hidden animate-fade-in">
+                <select id="unitList" onchange="fetchDetail()" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-2xl outline-none ring-1 ring-blue-200"></select>
+            </div>
+            <div id="autoIdDisplay" class="bg-green-50 p-4 rounded-2xl border-2 border-dashed border-green-200 text-center">
+                <input type="text" id="hpIdInput" readonly class="bg-transparent text-2xl font-bold text-green-600 text-center w-full outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <label class="flex flex-col items-center p-4 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl cursor-pointer hover:bg-blue-100 transition-all">
-                    <span class="text-xl mb-1">🖼️</span>
+                <label class="flex flex-col items-center p-4 bg-blue-50 border-2 border-dashed border-blue-200 rounded-2xl cursor-pointer">
                     <span class="text-[10px] font-bold text-blue-600 uppercase">รูปหน้าปก (1 รูป)</span>
                     <input type="file" id="inThumb" accept="image/*" class="hidden" onchange="updateLabel('inThumb', 'tLabel')">
                     <span id="tLabel" class="text-[8px] text-blue-400 mt-1 italic">ยังไม่ได้เลือก</span>
                 </label>
-                <label class="flex flex-col items-center p-4 bg-purple-50 border-2 border-dashed border-purple-200 rounded-2xl cursor-pointer hover:bg-purple-100 transition-all">
-                    <span class="text-xl mb-1">📸</span>
+                <label class="flex flex-col items-center p-4 bg-purple-50 border-2 border-dashed border-purple-200 rounded-2xl cursor-pointer">
                     <span class="text-[10px] font-bold text-purple-600 uppercase">รูปอัลบั้ม (1-15 รูป)</span>
                     <input type="file" id="inGall" multiple accept="image/*" class="hidden" onchange="updateLabel('inGall', 'gLabel')">
                     <span id="gLabel" class="text-[8px] text-purple-400 mt-1 italic">ยังไม่ได้เลือก</span>
@@ -53,14 +49,14 @@
             <div id="formSection" class="hidden space-y-4 pt-4 border-t">
                 <input type="text" id="idName" placeholder="ชื่อโครงการ/บ้าน" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="price" placeholder="ราคาเสนอขาย" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                    <input type="number" id="price" placeholder="ราคาขาย" class="p-4 bg-gray-50 rounded-2xl outline-none">
                     <select id="sysStatus" class="p-4 bg-gray-50 rounded-2xl outline-none font-bold text-blue-600">
-                        <option value="Online">🟢 Online</option>
-                        <option value="Inactive">🔴 Inactive</option>
+                        <option value="Online">🟢 Online (โชว์)</option>
+                        <option value="Inactive">🔴 Inactive (ซ่อน)</option>
                     </select>
                 </div>
                 <textarea id="desc" placeholder="รายละเอียด..." class="w-full p-4 bg-gray-50 rounded-2xl h-24 outline-none"></textarea>
-                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold shadow-xl active:scale-95 transition-all uppercase">ยืนยันการบันทึกข้อมูล</button>
+                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold uppercase active:scale-95">ยืนยันการบันทึกข้อมูล</button>
             </div>
         </div>
     </div>
@@ -94,13 +90,12 @@
                 document.getElementById('unitList').innerHTML = '<option>-- เลือกบ้านที่ต้องการแก้ไข --</option>' + units.map(u => `<option value="${u.id}">${u.id} | ${u.name}</option>`).join('');
             }
         }
-
-        function updateLabel(inputId, labelId) {
-            const input = document.getElementById(inputId);
+        
+        function updateLabel(id, labelId) {
+            const input = document.getElementById(id);
             document.getElementById(labelId).innerText = `เลือกแล้ว ${input.files.length} ไฟล์`;
         }
-        
-        // ... ฟังก์ชัน submitData และ toB64 ใช้ตัวเดิมได้เลยครับ ...
+        // ... (ส่วน submitData และ toB64 ใช้ตัวเดิมได้เลยครับ)
     </script>
 </body>
 </html>
