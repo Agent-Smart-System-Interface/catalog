@@ -12,15 +12,15 @@
         <h1 class="text-2xl font-bold text-center text-slate-800 mb-8 uppercase tracking-widest">MASTER FULL CONTROL</h1>
         
         <div class="flex gap-2 mb-8 bg-slate-100 p-2 rounded-2xl">
-            <button onclick="setMode('add')" id="modeAdd" class="flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600">➕ เพิ่มรายการใหม่</button>
-            <button onclick="setMode('edit')" id="modeEdit" class="flex-1 py-3 rounded-xl font-bold transition-all text-slate-400">✏️ แก้ไขรายการเดิม</button>
+            <button onclick="switchMode('add')" id="btnAdd" class="flex-1 py-3 rounded-xl font-bold transition-all bg-white shadow-sm text-blue-600">➕ เพิ่มรายการใหม่</button>
+            <button onclick="switchMode('edit')" id="btnEdit" class="flex-1 py-3 rounded-xl font-bold transition-all text-slate-400 hover:bg-white/50">✏️ แก้ไขรายการที่มีอยู่</button>
         </div>
 
         <div class="space-y-6">
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-1 text-center font-bold">โครงการที่ต้องการบริหารจัดการ</label>
-                <select id="projectSelect" onchange="loadUnits()" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold text-center">
-                    <option value="">-- เลือกโครงการ --</option>
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block text-center">เลือกโครงการที่จะบริหารจัดการ</label>
+                <select id="projectSelect" onchange="loadDataByMode()" class="w-full p-4 bg-slate-50 rounded-2xl border-none outline-none focus:ring-2 ring-blue-500 font-bold text-center">
+                    <option value="">-- โปรดระบุโครงการ --</option>
                     <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
                     <option value="Project_A">Unit Project A (HP-A)</option>
                     <option value="Project_B">Unit Project B (HP-B)</option>
@@ -29,44 +29,86 @@
                 </select>
             </div>
 
-            <div id="controlSection">
-                <input type="text" id="hpIdInput" readonly placeholder="รหัส ID" class="w-full p-4 bg-slate-50 text-slate-400 font-bold text-center rounded-2xl border-none">
+            <div id="unitSelectSection" class="hidden">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block text-center italic">เลือกบ้านที่ต้องการเข้าไปแก้ไขข้อมูล</label>
+                <select id="unitSelect" onchange="fetchUnitDetail()" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-2xl border-none outline-none ring-1 ring-blue-200"></select>
+            </div>
+
+            <div id="idDisplaySection" class="hidden">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block text-center italic">รหัส ID ว่างที่ระบบจองไว้สำหรับคุณ</label>
+                <input type="text" id="hpIdInput" readonly class="w-full p-4 bg-green-50 text-green-600 font-bold text-center rounded-2xl border-none">
             </div>
 
             <div id="formSection" class="hidden space-y-4 pt-4 border-t border-slate-50">
-                <input type="text" id="idName" placeholder="ชื่อบ้าน" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
+                <input type="text" id="idName" placeholder="ชื่อบ้าน / หัวข้อประกาศ" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="price" placeholder="ราคาขาย" class="p-4 bg-gray-50 rounded-2xl outline-none">
-                    <select id="sysStatus" class="p-4 bg-gray-50 rounded-2xl outline-none font-bold text-blue-600">
+                    <input type="number" id="price" placeholder="ราคา" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                    <select id="sysStatus" class="p-4 bg-gray-50 rounded-2xl outline-none font-bold text-blue-600 border-none">
                         <option value="Online">🟢 Online</option>
-                        <option value="Inactive">🔴 Inactive</option>
-                        <option value="Open for Edit">🟡 Open for Edit</option>
+                        <option value="Inactive">🔴 Inactive (ซ่อน)</option>
+                        <option value="Open for Edit">🟡 Open for Edit (เปิดให้แอดมิน)</option>
                     </select>
                 </div>
-                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold uppercase active:scale-95 transition-all">ยืนยันการบันทึกข้อมูล</button>
+                <textarea id="desc" placeholder="รายละเอียด..." class="w-full p-4 bg-gray-50 rounded-2xl h-24 outline-none"></textarea>
+                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold shadow-xl active:scale-95 transition-all uppercase">บันทึกข้อมูล Master</button>
             </div>
         </div>
+        <div id="statusBox" class="hidden mt-6 p-4 rounded-2xl text-center text-xs font-bold uppercase animate-pulse"></div>
     </div>
 
     <script>
-        // 🛑 ใส่ API URL ของคุณที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec"; 
-        let currentMode = 'add';
+        const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec"; //
+        let currentMode = 'add'; //
 
-        async function loadUnits() {
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnAdd').className = mode === 'add' ? "flex-1 py-3 rounded-xl font-bold bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold text-slate-400";
+            document.getElementById('btnEdit').className = mode === 'edit' ? "flex-1 py-3 rounded-xl font-bold bg-white shadow-sm text-blue-600" : "flex-1 py-3 rounded-xl font-bold text-slate-400";
+            loadDataByMode();
+        }
+
+        async function loadDataByMode() {
             const p = document.getElementById('projectSelect').value;
             if (!p) return;
             
-            if (currentMode === 'add') {
+            const unitSection = document.getElementById('unitSelectSection');
+            const idSection = document.getElementById('idDisplaySection');
+            const form = document.getElementById('formSection');
+
+            form.classList.add('hidden');
+
+            if (currentMode === 'edit') {
+                unitSection.classList.remove('hidden');
+                idSection.classList.add('hidden');
+                const select = document.getElementById('unitSelect');
+                select.innerHTML = '<option>⏳ กำลังโหลดรายชื่อบ้าน...</option>';
+                const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}`);
+                const units = await res.json();
+                select.innerHTML = '<option value="">-- เลือกหลังที่จะแก้ไข --</option>' + units.map(u => `<option value="${u.id}">${u.id} | ${u.name}</option>`).join('');
+            } else {
+                unitSection.classList.add('hidden');
+                idSection.classList.remove('hidden');
+                document.getElementById('hpIdInput').value = "⏳ ค้นหารหัสว่าง...";
                 const res = await fetch(`${API_URL}?mode=getEditSlot&project=${p}`);
                 const id = await res.text();
                 document.getElementById('hpIdInput').value = id;
-                if (id !== "Locked") document.getElementById('formSection').classList.remove('hidden');
-            } else {
-                // Logic โหลด Unit List สำหรับแก้ไข
+                if (id !== "Locked") form.classList.remove('hidden');
             }
         }
-        // ... (Logic submitData และ setMode) ...
+
+        async function fetchUnitDetail() {
+            const p = document.getElementById('projectSelect').value;
+            const id = document.getElementById('unitSelect').value;
+            if (!id) return;
+            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${p}&hpId=${id}`);
+            const data = await res.json();
+            document.getElementById('idName').value = data.ID_NAME || "";
+            document.getElementById('price').value = data.Price || 0;
+            document.getElementById('sysStatus').value = data.System_Status || "Online";
+            document.getElementById('desc').value = data.Description || "";
+            document.getElementById('formSection').classList.remove('hidden');
+        }
+        // ... (Logic submitData และ toB64 คงเดิม) ...
     </script>
 </body>
 </html>
