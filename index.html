@@ -2,16 +2,16 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Agent Smart System - Master Hub</title>
+    <title>AGENT SMART SYSTEM - MASTER HUB</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>body { font-family: 'Kanit', sans-serif; }</style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-slate-50 min-h-screen font-['Kanit']">
     <header class="bg-white shadow-sm sticky top-0 z-50 py-6">
         <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold text-slate-800 uppercase">Agent Smart System <span class="text-blue-600">Master Hub</span></h1>
-            <select id="projectFilter" onchange="filterData()" class="p-3 bg-slate-100 rounded-xl outline-none font-bold text-xs border-none">
+            <h1 class="text-2xl font-bold text-slate-800 uppercase tracking-tighter">Agent Smart System <span class="text-blue-600">Master Hub</span></h1>
+            <select id="projectFilter" onchange="filterData()" class="p-3 bg-slate-100 rounded-xl outline-none font-bold text-xs border-none shadow-sm cursor-pointer hover:bg-slate-200 transition-colors">
                 <option value="all">แสดงบ้านทั้งหมด (5 Projects)</option>
                 <option value="Project_Master">⭐ Master Hub (HP-Z)</option>
                 <option value="Project_A">Project A (HP-A)</option>
@@ -22,41 +22,46 @@
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-10">
-        <div id="loading" class="text-center py-20 text-slate-400">กำลังเชื่อมต่อฐานข้อมูล...</div>
-        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    <main class="container mx-auto px-4 py-12">
+        <div id="loading" class="text-center py-24 text-slate-400 animate-pulse text-lg">กำลังดึงข้อมูลอสังหาริมทรัพย์ล่าสุด...</div>
+        <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; //
+        // 🛑 สำคัญ: แทนที่ด้วย URL ของคุณที่ได้จากการ Deploy Apps Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
 
         let rawData = [];
         async function init() {
             try {
-                const res = await fetch(`${API_URL}?action=getPublicCatalog&project=all`);
+                const res = await fetch(`${API_URL}?action=getPublicCatalog&project=all&t=${new Date().getTime()}`);
                 const json = await res.json();
                 if (json.status === "success") {
                     rawData = json.data;
                     render(rawData);
                 }
-            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ เชื่อมต่อล้มเหลว"; }
+            } catch (e) { document.getElementById('loading').innerHTML = "⚠️ เชื่อมต่อฐานข้อมูลล้มเหลว โปรดตรวจสอบ API URL"; }
         }
 
         function render(items) {
             const grid = document.getElementById('grid');
             document.getElementById('loading').style.display = 'none';
-            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center py-20 text-slate-400'>ยังไม่มีรายการบ้านที่ออนไลน์</p>"; return; }
+            if (items.length === 0) { grid.innerHTML = "<p class='col-span-full text-center py-24 text-slate-400 font-bold'>ยังไม่มีบ้านที่ออนไลน์ (Live) ในขณะนี้</p>"; return; }
+            
             grid.innerHTML = items.map(i => `
-                <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl transition-all">
-                    <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400'}" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2 uppercase font-bold text-[10px]">
-                            <span class="text-blue-500">${i.Project_Source || i.Project_Name}</span>
-                            <span class="text-slate-300">${i.HP_ID}</span>
+                <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl transition-all duration-500 group">
+                    <div class="relative overflow-hidden">
+                        <img src="${i.Thumbnail_Image || 'https://via.placeholder.com/600x400'}" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute top-5 left-5 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold text-slate-800 shadow-sm uppercase tracking-widest">${i.HP_ID}</div>
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest">${i.Project_Source || i.Project_Name}</span>
+                            <span class="text-[10px] font-bold text-green-500 uppercase bg-green-50 px-3 py-1 rounded-full">${i.System_Status}</span>
                         </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-2 truncate">${i.ID_NAME}</h3>
-                        <p class="text-2xl font-bold text-blue-600 mb-4">฿${Number(i.Price || 0).toLocaleString()}</p>
-                        <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-xs">ดูรายละเอียด</button>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 truncate group-hover:text-blue-600 transition-colors">${i.ID_NAME}</h3>
+                        <p class="text-3xl font-bold text-slate-900 mb-8 tracking-tighter">฿${Number(i.Price || 0).toLocaleString()}</p>
+                        <button class="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-bold text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg active:scale-95">ดูรายละเอียดเชิงลึก</button>
                     </div>
                 </div>
             `).join('');
