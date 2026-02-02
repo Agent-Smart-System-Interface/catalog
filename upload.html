@@ -2,29 +2,37 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>MASTER HUB CONTROL V17.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MASTER HUB CONTROL - AGENT SMART SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>body { font-family: 'Kanit', sans-serif; }</style>
+    <style>
+        body { font-family: 'Kanit', sans-serif; }
+        .animate-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl p-10">
-        <h1 class="text-2xl font-bold text-center text-slate-800 mb-10 uppercase tracking-widest italic text-blue-600">Master Hub Control</h1>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4 md:p-8">
+    <div class="w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl p-8 md:p-12 animate-pop">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-slate-800 mb-10 uppercase tracking-widest italic text-blue-600">Master Hub Control</h1>
         
         <div class="flex gap-3 mb-10 bg-slate-100 p-2 rounded-3xl">
             <button onclick="switchMode('add')" id="btnAdd" class="flex-1 py-4 rounded-2xl font-bold transition-all bg-white shadow-md text-blue-600">
                 <i class="fa-solid fa-plus-circle mr-2"></i> เพิ่มรายการใหม่
             </button>
-            <button onclick="switchMode('edit')" id="btnEdit" class="flex-1 py-4 rounded-2xl font-bold transition-all text-slate-400">
-                <i class="fa-solid fa-edit mr-2"></i> แก้ไขรายการเดิม
+            <button onclick="switchMode('edit')" id="btnEdit" class="flex-1 py-4 rounded-2xl font-bold transition-all text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-pen-to-square mr-2"></i> แก้ไขรายการเดิม
             </button>
         </div>
 
         <div class="space-y-6">
             <div>
                 <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-2">โครงการที่จะบริหารจัดการ</label>
-                <select id="projectSelect" onchange="handleProjectChange()" class="w-full p-5 bg-slate-50 rounded-3xl border-none font-bold text-center shadow-inner appearance-none cursor-pointer">
+                <select id="projectSelect" onchange="handleProjectChange()" class="w-full p-5 bg-slate-50 rounded-3xl border-none font-bold text-center shadow-inner appearance-none cursor-pointer focus:ring-2 ring-blue-500 transition-all">
                     <option value="">-- โปรดระบุโครงการ --</option>
                     <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
                     <option value="Project_A">Unit Project A (HP-A)</option>
@@ -34,28 +42,28 @@
                 </select>
             </div>
 
-            <div id="editSelectorArea" class="hidden animate-fade-in">
+            <div id="editSelectorArea" class="hidden animate-pop">
                 <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block ml-2">เลือกบ้านที่ต้องการแก้ไขข้อมูล/สถานะ</label>
-                <select id="unitList" onchange="fetchDetailForEdit()" class="w-full p-5 bg-blue-50 text-blue-700 font-bold rounded-3xl outline-none ring-2 ring-blue-100"></select>
+                <select id="unitList" onchange="fetchDetailForEdit()" class="w-full p-5 bg-blue-50 text-blue-700 font-bold rounded-3xl outline-none ring-2 ring-blue-100 shadow-sm focus:ring-blue-400 transition-all"></select>
             </div>
-            <div id="addSelectorArea" class="hidden">
+            <div id="addSelectorArea" class="hidden animate-pop">
                 <div class="bg-green-50 p-6 rounded-[2rem] border-2 border-dashed border-green-200 text-center shadow-inner">
-                    <label class="text-[10px] font-bold text-green-400 uppercase mb-1 block">รหัส ID ต่อไปที่จะบันทึก</label>
+                    <label class="text-[10px] font-bold text-green-400 uppercase mb-1 block italic">รหัส ID ต่อไปที่จะบันทึกอัตโนมัติ</label>
                     <input type="text" id="hpIdInput" readonly class="bg-transparent text-3xl font-bold text-green-600 text-center w-full outline-none">
                 </div>
             </div>
 
-            <div id="fullFormArea" class="hidden space-y-6 pt-8 border-t border-slate-100 animate-fade-in">
+            <div id="fullFormArea" class="hidden space-y-6 pt-8 border-t border-slate-100 animate-pop">
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <label class="flex flex-col items-center p-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-[2rem] cursor-pointer hover:bg-blue-100 transition-all">
-                        <span class="text-xl mb-1 text-blue-600"><i class="fa-solid fa-image"></i></span>
+                    <label class="flex flex-col items-center p-6 bg-blue-50 border-2 border-dashed border-blue-200 rounded-[2rem] cursor-pointer hover:bg-blue-100 transition-all group">
+                        <span class="text-xl mb-1 text-blue-600 group-hover:scale-110 transition-transform"><i class="fa-solid fa-image"></i></span>
                         <span class="text-[10px] font-bold text-blue-600 uppercase">รูปหน้าปก (1 รูป)</span>
                         <input type="file" id="inThumb" accept="image/*" class="hidden" onchange="updateLabel('inThumb', 'tLab')">
                         <span id="tLab" class="text-[9px] text-blue-400 mt-2 italic text-center">ยังไม่ได้เลือกไฟล์</span>
                     </label>
-                    <label class="flex flex-col items-center p-6 bg-purple-50 border-2 border-dashed border-purple-200 rounded-[2rem] cursor-pointer hover:bg-purple-100 transition-all">
-                        <span class="text-xl mb-1 text-purple-600"><i class="fa-solid fa-images"></i></span>
+                    <label class="flex flex-col items-center p-6 bg-purple-50 border-2 border-dashed border-purple-200 rounded-[2rem] cursor-pointer hover:bg-purple-100 transition-all group">
+                        <span class="text-xl mb-1 text-purple-600 group-hover:scale-110 transition-transform"><i class="fa-solid fa-images"></i></span>
                         <span class="text-[10px] font-bold text-purple-600 uppercase">รูปอัลบั้ม (1-15 รูป)</span>
                         <input type="file" id="inGall" multiple accept="image/*" class="hidden" onchange="updateLabel('inGall', 'gLab')">
                         <span id="gLab" class="text-[9px] text-purple-400 mt-2 italic text-center">ยังไม่ได้เลือกไฟล์</span>
@@ -63,20 +71,28 @@
                 </div>
 
                 <div class="space-y-4">
-                    <input type="text" id="idName" placeholder="ระบุชื่อบ้าน / หัวข้อประกาศ" class="w-full p-5 bg-gray-50 rounded-2xl outline-none shadow-inner">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 block">ชื่อบ้าน / หัวข้อประกาศ</label>
+                    <input type="text" id="idName" placeholder="ระบุชื่อบ้าน หรือ หัวข้อที่ต้องการโชว์..." class="w-full p-5 bg-gray-50 rounded-2xl outline-none shadow-inner focus:ring-2 ring-blue-500 transition-all">
                     
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="price" placeholder="ราคาเสนอขาย" class="p-5 bg-gray-50 rounded-2xl outline-none shadow-inner font-bold text-slate-700">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 block">ราคาเสนอขาย (บาท)</label>
+                            <input type="number" id="price" placeholder="0" class="p-5 bg-gray-50 rounded-2xl outline-none shadow-inner font-bold text-slate-700 w-full focus:ring-2 ring-blue-500 transition-all">
+                        </div>
                         
-                        <select id="sysStatus" onchange="updateStatusColor()" class="p-5 rounded-2xl outline-none font-bold shadow-sm cursor-pointer transition-all">
-                            <option value="Live">🟢 ออนไลน์ (Live)</option>
-                            <option value="Pending">🟡 กำลังเตรียมข้อมูล (Pending)</option>
-                            <option value="Sold">🔴 ปิดการขาย (Sold)</option>
-                            <option value="Inactive">⚪ ปิดระบบชั่วคราว (Inactive)</option>
-                        </select>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 block">สถานะการแสดงผล</label>
+                            <select id="sysStatus" onchange="updateStatusColor()" class="p-5 rounded-2xl outline-none font-bold shadow-sm cursor-pointer transition-all w-full border-none">
+                                <option value="Live">🟢 ออนไลน์ (Live)</option>
+                                <option value="Pending">🟡 กำลังเตรียมข้อมูล (Pending)</option>
+                                <option value="Sold">🔴 ปิดการขาย (Sold)</option>
+                                <option value="Inactive">⚪ ปิดระบบชั่วคราว (Inactive)</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <textarea id="desc" placeholder="บอกจุดเด่นของบ้านหลังนี้..." class="w-full p-5 bg-gray-50 rounded-2xl h-32 outline-none shadow-inner"></textarea>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-2 block">รายละเอียดเชิงลึก</label>
+                    <textarea id="desc" placeholder="บอกจุดเด่น หรือข้อมูลสำคัญของบ้านหลังนี้..." class="w-full p-5 bg-gray-50 rounded-2xl h-32 outline-none shadow-inner focus:ring-2 ring-blue-500 transition-all"></textarea>
                 </div>
                 
                 <button onclick="submitToMaster()" id="btnSave" class="w-full bg-blue-600 text-white py-6 rounded-[2rem] font-bold uppercase shadow-xl hover:bg-slate-900 transition-all flex justify-center items-center active:scale-95">
@@ -87,18 +103,18 @@
     </div>
 
     <div id="successPop" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl">
+        <div class="bg-white rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl animate-pop">
             <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
             <h2 class="text-2xl font-bold text-slate-800 mb-2">บันทึกสำเร็จ!</h2>
-            <p class="text-slate-500 text-sm mb-8">ข้อมูลโครงการได้รับการอัปเดต <br>ในฐานข้อมูลเรียบร้อยแล้ว</p>
+            <p class="text-slate-500 text-sm mb-8">ข้อมูลโครงการได้รับการอัปเดตเรียบร้อยแล้ว</p>
             <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-green-600 transition-all shadow-lg">ตกลง</button>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; //
+        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; // 🛑 ใส่ URL ของคุณที่นี่
         let currentMode = 'add';
 
         function switchMode(mode) {
@@ -121,10 +137,11 @@
                 editArea.classList.remove('hidden');
                 addArea.classList.add('hidden');
                 const list = document.getElementById('unitList');
-                list.innerHTML = '<option>⏳ กำลังดึงรายชื่อบ้าน...</option>';
+                list.innerHTML = '<option>⏳ กำลังดึงรายชื่อยูนิต...</option>';
                 const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}`);
                 const units = await res.json();
-                list.innerHTML = '<option value="">-- เลือกรายการที่ต้องการแก้ไข --</option>' + units.map(u => `<option value="${u.id}">${u.id} | ${u.name}</option>`).join('');
+                list.innerHTML = '<option value="">-- เลือกบ้านที่ต้องการแก้ไข --</option>' + 
+                    units.map(u => `<option value="${u.id}">${u.id} | ${u.name}</option>`).join('');
             } else {
                 editArea.classList.add('hidden');
                 addArea.classList.remove('hidden');
@@ -142,7 +159,7 @@
             const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${p}&hpId=${id}`);
             const data = await res.json();
             
-            // นำข้อมูลเดิมมาใส่ในฟิลด์ต่างๆ ทันที
+            // ดึงข้อมูลเดิมมาใส่ฟอร์มเป๊ะๆ
             document.getElementById('idName').value = data.ID_NAME || "";
             document.getElementById('price').value = data.Price || 0;
             document.getElementById('sysStatus').value = data.System_Status || "Live";
@@ -165,7 +182,7 @@
         async function submitToMaster() {
             const btn = document.getElementById('btnSave');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-3"></i> กำลังอัปเดตข้อมูล Master...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-3"></i> กำลังอัปเดตข้อมูล...';
 
             const payload = {
                 project: document.getElementById('projectSelect').value,
@@ -178,9 +195,10 @@
             };
 
             try {
+                // สำหรับ POST ข้อมูลไปยัง Apps Script
                 await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
                 document.getElementById('successPop').classList.replace('hidden', 'flex');
-            } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); btn.disabled = false; }
+            } catch (e) { alert("เกิดข้อผิดพลาดในการบันทึก"); btn.disabled = false; }
         }
     </script>
 </body>
