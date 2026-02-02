@@ -8,18 +8,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>body { font-family: 'Kanit', sans-serif; }</style>
 </head>
-<body class="bg-blue-50 min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl p-10">
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-widest">Agent Smart System</h1>
-            <p class="text-blue-500 text-xs font-bold mt-1">INTERNAL CONTROL PANEL</p>
-        </div>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+        <h1 class="text-2xl font-bold text-center text-gray-800 uppercase mb-6">Agent Smart System</h1>
         
-        <div class="space-y-5">
+        <div class="space-y-6">
             <div>
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-1">โครงการที่ต้องการอัปเดต</label>
-                <select id="projectSelect" onchange="fetchNextID()" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 ring-blue-400 outline-none text-gray-700">
-                    <option value="">-- โปรดเลือกโครงการ --</option>
+                <label class="text-xs font-bold text-gray-400 uppercase ml-1">โครงการที่รับผิดชอบ</label>
+                <select id="projectSelect" onchange="checkMasterSloT()" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border-none focus:ring-2 ring-blue-400">
+                    <option value="">-- โปรดระบุโครงการ --</option>
                     <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
                     <option value="Project_A">Unit Project A (HP-A)</option>
                     <option value="Project_B">Unit Project B (HP-B)</option>
@@ -28,93 +25,143 @@
                 </select>
             </div>
 
-            <div id="idDisplaySection" class="hidden">
-                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-2 ml-1">รหัสยูนิตที่ว่างล่าสุด (AUTO-SELECTED)</label>
-                <input type="text" id="hpIdInput" readonly class="w-full p-4 bg-blue-50 text-blue-600 font-bold text-center rounded-2xl border-none">
+            <div id="idStatusSection" class="hidden">
+                <label class="text-xs font-bold text-gray-400 uppercase ml-1">สถานะสิทธิ์จาก Master (Auto-Check)</label>
+                <input type="text" id="hpIdInput" readonly class="w-full p-4 font-bold text-center rounded-2xl border-none ring-1 ring-blue-100">
             </div>
 
-            <div id="formSection" class="hidden space-y-4 border-t pt-6">
-                <input type="text" id="idName" placeholder="ชื่อยูนิต / หัวข้อประกาศ" class="w-full p-4 bg-gray-50 border-none rounded-2xl outline-none">
+            <div id="formSection" class="hidden space-y-4 pt-6 border-t border-gray-50">
+                <input type="text" id="idName" placeholder="ชื่อบ้าน/หัวข้อ" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="price" placeholder="ราคาขาย" class="p-4 bg-gray-50 border-none rounded-2xl outline-none">
-                    <input type="text" id="status" placeholder="สถานะ (เช่น พร้อมขาย)" class="p-4 bg-gray-50 border-none rounded-2xl outline-none">
+                    <input type="number" id="price" placeholder="ราคา" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                    <input type="text" id="status" placeholder="สถานะ" class="p-4 bg-gray-50 rounded-2xl outline-none">
                 </div>
-                <textarea id="description" placeholder="รายละเอียดบ้าน..." class="w-full p-4 bg-gray-50 border-none rounded-2xl h-24 outline-none"></textarea>
-
-                <div class="flex gap-4">
-                    <label class="flex-1 p-4 bg-gray-50 border-2 border-dashed rounded-2xl text-center cursor-pointer">
-                        <span id="txtThumb" class="text-[10px] font-bold text-gray-400">รูปหน้าปก</span>
-                        <input type="file" id="inThumb" accept="image/*" class="hidden" onchange="updateTxt('thumb')">
-                    </label>
-                    <label class="flex-1 p-4 bg-gray-50 border-2 border-dashed rounded-2xl text-center cursor-pointer">
-                        <span id="txtGall" class="text-[10px] font-bold text-gray-400">รูปอัลบั้ม</span>
-                        <input type="file" id="inGall" multiple accept="image/*" class="hidden" onchange="updateTxt('gall')">
-                    </label>
+                <div class="flex gap-2">
+                    <label class="flex-1 p-3 bg-gray-50 border-2 border-dashed rounded-xl text-center cursor-pointer text-xs text-gray-400">รูปหน้าปก<input type="file" id="inThumb" class="hidden" onchange="updateTxt('thumb')"></label>
+                    <label class="flex-1 p-3 bg-gray-50 border-2 border-dashed rounded-xl text-center cursor-pointer text-xs text-gray-400">รูปอัลบั้ม<input type="file" id="inGall" multiple class="hidden" onchange="updateTxt('gall')"></label>
                 </div>
-
-                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold shadow-lg shadow-blue-100 active:scale-95 transition-all">บันทึกข้อมูลเข้าสู่ระบบ</button>
+                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100">ยืนยันการบันทึกข้อมูล</button>
             </div>
         </div>
-        <div id="statusBox" class="hidden mt-6 p-4 rounded-2xl text-center text-[10px] font-bold uppercase tracking-widest"></div>
+        <div id="statusBox" class="hidden mt-6 p-4 rounded-2xl text-center text-xs font-bold"></div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx0oMpbOThy-0tLUk-MpS6RrbhrbxUozfNUr92Y3wVGhufN51WspGUyuTWnHJ0t0kOE/exec";
+        const API_URL = "<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Smart System - Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Kanit', sans-serif; }</style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+        <h1 class="text-2xl font-bold text-center text-gray-800 uppercase mb-6">Agent Smart System</h1>
+        
+        <div class="space-y-6">
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase ml-1">โครงการที่รับผิดชอบ</label>
+                <select id="projectSelect" onchange="checkMasterSloT()" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border-none focus:ring-2 ring-blue-400">
+                    <option value="">-- โปรดระบุโครงการ --</option>
+                    <option value="Project_Master">⭐ Agent Master Hub (HP-Z)</option>
+                    <option value="Project_A">Unit Project A (HP-A)</option>
+                    <option value="Project_B">Unit Project B (HP-B)</option>
+                    <option value="Project_C">Unit Project C (HP-C)</option>
+                    <option value="Project_D">Unit Project D (HP-D)</option>
+                </select>
+            </div>
 
-        async function fetchNextID() {
-            const p = document.getElementById('projectSelect').value;
-            const idSection = document.getElementById('idDisplaySection');
-            const form = document.getElementById('formSection');
+            <div id="idStatusSection" class="hidden">
+                <label class="text-xs font-bold text-gray-400 uppercase ml-1">สถานะสิทธิ์จาก Master (Auto-Check)</label>
+                <input type="text" id="hpIdInput" readonly class="w-full p-4 font-bold text-center rounded-2xl border-none ring-1 ring-blue-100">
+            </div>
+
+            <div id="formSection" class="hidden space-y-4 pt-6 border-t border-gray-50">
+                <input type="text" id="idName" placeholder="ชื่อบ้าน/หัวข้อ" class="w-full p-4 bg-gray-50 rounded-2xl outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="price" placeholder="ราคา" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                    <input type="text" id="status" placeholder="สถานะ" class="p-4 bg-gray-50 rounded-2xl outline-none">
+                </div>
+                <div class="flex gap-2">
+                    <label class="flex-1 p-3 bg-gray-50 border-2 border-dashed rounded-xl text-center cursor-pointer text-xs text-gray-400">รูปหน้าปก<input type="file" id="inThumb" class="hidden" onchange="updateTxt('thumb')"></label>
+                    <label class="flex-1 p-3 bg-gray-50 border-2 border-dashed rounded-xl text-center cursor-pointer text-xs text-gray-400">รูปอัลบั้ม<input type="file" id="inGall" multiple class="hidden" onchange="updateTxt('gall')"></label>
+                </div>
+                <button onclick="submitData()" id="btnSubmit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100">ยืนยันการบันทึกข้อมูล</button>
+            </div>
+        </div>
+        <div id="statusBox" class="hidden mt-6 p-4 rounded-2xl text-center text-xs font-bold"></div>
+    </div>
+
+    <script>
+        const API_URL = "URL_APPS_SCRIPT_ของคุณ"; //
+
+        async function checkMasterSloT() {
+            const p = document.getElementById('projectSelect').value; //
+            const idInput = document.getElementById('hpIdInput'); //
+            const form = document.getElementById('formSection'); //
             if (!p) return;
 
-            idSection.classList.remove('hidden');
-            document.getElementById('hpIdInput').value = "⏳ ค้นหารหัสที่ว่าง...";
+            document.getElementById('idStatusSection').classList.remove('hidden'); //
+            idInput.value = "⏳ กำลังตรวจสอบสิทธิ์จาก Master..."; //
             
             try {
-                const res = await fetch(`${API_URL}?mode=autoFind&project=${p}`);
-                const nextID = await res.text();
-                document.getElementById('hpIdInput').value = nextID;
-                if (!nextID.includes("Full")) form.classList.remove('hidden');
+                const res = await fetch(`${API_URL}?mode=getEditSlot&project=${p}`); //
+                const id = await res.text(); //
+                
+                if (id !== "Locked") { //
+                    idInput.value = "เปิดแก้ไข: " + id; //
+                    idInput.className = "w-full p-4 bg-green-50 text-green-600 font-bold text-center rounded-2xl border-none"; //
+                    form.classList.remove('hidden'); //
+                    window.currentHpId = id; //
+                } else { //
+                    idInput.value = "🔒 ระบบถูกล็อกโดย Master"; //
+                    idInput.className = "w-full p-4 bg-red-50 text-red-600 font-bold text-center rounded-2xl border-none"; //
+                    form.classList.add('hidden'); //
+                }
             } catch (e) { alert("ล้มเหลว"); }
         }
 
-        function updateTxt(type) {
-            const f = document.getElementById(type === 'thumb' ? 'inThumb' : 'inGall').files;
-            document.getElementById(type === 'thumb' ? 'txtThumb' : 'txtGall').innerText = `✅ ตรวจพบ ${f.length} รูป`;
+        async function submitData() {
+            // ... Logic การส่งข้อมูล Post เหมือนเดิม แต่ใช้ window.currentHpId ที่ดึงมาได้ ...
+        }
+        function updateTxt(type) { /* ... Logic แสดงชื่อไฟล์ ... */ }
+    </script>
+</body>
+</html>"; //
+
+        async function checkMasterSloT() {
+            const p = document.getElementById('projectSelect').value; //
+            const idInput = document.getElementById('hpIdInput'); //
+            const form = document.getElementById('formSection'); //
+            if (!p) return;
+
+            document.getElementById('idStatusSection').classList.remove('hidden'); //
+            idInput.value = "⏳ กำลังตรวจสอบสิทธิ์จาก Master..."; //
+            
+            try {
+                const res = await fetch(`${API_URL}?mode=getEditSlot&project=${p}`); //
+                const id = await res.text(); //
+                
+                if (id !== "Locked") { //
+                    idInput.value = "เปิดแก้ไข: " + id; //
+                    idInput.className = "w-full p-4 bg-green-50 text-green-600 font-bold text-center rounded-2xl border-none"; //
+                    form.classList.remove('hidden'); //
+                    window.currentHpId = id; //
+                } else { //
+                    idInput.value = "🔒 ระบบถูกล็อกโดย Master"; //
+                    idInput.className = "w-full p-4 bg-red-50 text-red-600 font-bold text-center rounded-2xl border-none"; //
+                    form.classList.add('hidden'); //
+                }
+            } catch (e) { alert("ล้มเหลว"); }
         }
 
         async function submitData() {
-            const btn = document.getElementById('btnSubmit');
-            const box = document.getElementById('statusBox');
-            btn.disabled = true;
-            box.classList.remove('hidden');
-            box.className = "mt-6 p-4 rounded-2xl text-center text-[10px] bg-blue-50 text-blue-600 animate-pulse";
-            box.innerText = "กำลังประมวลผล...";
-
-            const payload = {
-                project: document.getElementById('projectSelect').value,
-                hpId: document.getElementById('hpIdInput').value,
-                idName: document.getElementById('idName').value,
-                price: document.getElementById('price').value,
-                description: document.getElementById('description').value,
-                files: []
-            };
-
-            const t = document.getElementById('inThumb').files;
-            const g = document.getElementById('inGall').files;
-
-            if (t.length > 0) payload.files.push({ name: "t.jpg", type: t[0].type, base64: (await toB64(t[0])).split(',')[1], isThumb: true });
-            for (let f of g) payload.files.push({ name: f.name, type: f.type, base64: (await toB64(f)).split(',')[1], isThumb: false });
-
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                box.className = "mt-6 p-4 rounded-2xl text-center text-[10px] bg-green-50 text-green-600";
-                box.innerText = "✅ บันทึกสำเร็จ!";
-                setTimeout(() => location.reload(), 2000);
-            } catch (e) { box.innerText = "❌ ผิดพลาด"; btn.disabled = false; }
+            // ... Logic การส่งข้อมูล Post เหมือนเดิม แต่ใช้ window.currentHpId ที่ดึงมาได้ ...
         }
-
-        function toB64(f) { return new Promise((res) => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(f); }); }
+        function updateTxt(type) { /* ... Logic แสดงชื่อไฟล์ ... */ }
     </script>
 </body>
 </html>
