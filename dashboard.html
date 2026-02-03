@@ -12,7 +12,7 @@
         .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         .dense-row th { padding: 0.6rem !important; font-size: 10px !important; text-transform: uppercase; white-space: nowrap; }
         .no-wrap-id { white-space: nowrap; font-size: 11px; font-weight: 700; color: #1e3a8a; }
-        .status-badge { font-size: 8px; padding: 2px 6px; border-radius: 99px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
+        .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; white-space: nowrap; }
     </style>
 </head>
 <body class="p-2 md:p-6 italic">
@@ -48,7 +48,7 @@
         <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-blue-600 animate-in fade-in zoom-in duration-200">
             <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Master Update: <span id="editingId" class="text-blue-600"></span></h2>
             <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3 italic">
                     <div>
                         <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">แปลง (PLOT)</label>
                         <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]">
@@ -58,22 +58,17 @@
                         <input type="number" id="priceInput" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3 italic">
                     <div>
-                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic font-bold text-blue-600">System (Visibility)</label>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic font-bold text-blue-600">System Status</label>
                         <select id="sysStatus" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none">
-                            <option value="Online">🟢 Online</option>
-                            <option value="Pending">🟡 Pending</option>
-                            <option value="Off">🔴 Off</option>
+                            <option value="Online">🟢 Online</option><option value="Pending">🟡 Pending</option><option value="Off">🔴 Off</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic font-bold text-orange-600">Unit Status (Sales)</label>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic font-bold text-orange-600">Unit Status</label>
                         <select id="unitStatus" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none">
-                            <option value="Available">Available</option>
-                            <option value="Under Construction">Under Con</option>
-                            <option value="Reserved">Reserved</option>
-                            <option value="Sold">Sold</option>
+                            <option value="Available">Available</option><option value="Under Construction">Under Con</option><option value="Reserved">Reserved</option><option value="Sold">Sold</option>
                         </select>
                     </div>
                 </div>
@@ -92,12 +87,12 @@
         }
         function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/50 transition-colors">
+                <tr class="hover:bg-blue-50/50">
                     <td class="no-wrap-id pl-4">${u.id}</td>
-                    <td>${u.name || '-'}</td>
+                    <td class="font-bold text-slate-500">${u.name || '-'}</td>
                     <td class="text-center"><span class="${getSysColor(u.sysStatus)} status-badge">${u.sysStatus || 'PND'}</span></td>
                     <td class="text-center"><span class="${getUnitColor(u.unitStatus)} status-badge">${u.unitStatus || 'N/A'}</span></td>
-                    <td class="text-center"><button onclick="openEdit('${u.id}', '${u.project}')" class="text-blue-500 p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td class="text-center text-blue-500"><button onclick="openEdit('${u.id}', '${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
         }
         function getSysColor(s) {
@@ -106,10 +101,10 @@
             return 'bg-yellow-100 text-yellow-600';
         }
         function getUnitColor(s) {
-            if (s === 'Available') return 'bg-green-50 text-green-600 border border-green-200';
-            if (s === 'Sold') return 'bg-red-50 text-red-600 border border-red-200';
-            if (s === 'Under Construction') return 'bg-orange-50 text-orange-600 border border-orange-200';
-            return 'bg-yellow-50 text-yellow-600 border border-yellow-200';
+            if (s === 'Available') return 'bg-green-50 text-green-700 border border-green-200';
+            if (s === 'Sold') return 'bg-red-50 text-red-700 border border-red-200';
+            if (s === 'Under Construction') return 'bg-orange-50 text-orange-700 border border-orange-200';
+            return 'bg-yellow-50 text-yellow-700 border border-yellow-200';
         }
         async function openEdit(id, project) {
             window.activeProj = project;
@@ -129,7 +124,8 @@
         async function saveData() {
             const btn = document.getElementById('btnSave'); btn.disabled = true;
             const payload = { project: window.activeProj, hpId: document.getElementById('editingId').innerText, idName: document.getElementById('plotInput').value, price: document.getElementById('priceInput').value, sysStatus: document.getElementById('sysStatus').value, unitStatus: document.getElementById('unitStatus').value, files: [] };
-            try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); closeEdit(); init(); } catch (e) { btn.disabled = false; }
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            closeEdit(); init();
         }
         window.onload = init;
     </script>
