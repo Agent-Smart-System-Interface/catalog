@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MASTER DASHBOARD V4.0</title>
+    <title>MASTER DASHBOARD V5.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,12 +24,12 @@
 
     <div class="max-w-6xl mx-auto">
         <div class="flex flex-col md:flex-row gap-2 mb-4">
-            <select id="projectSelect" onchange="init()" class="p-3 bg-white rounded-xl shadow-sm border-none font-bold text-[11px] outline-none ring-1 ring-slate-200">
+            <select id="projectSelect" onchange="init()" class="p-3 bg-white rounded-xl shadow-sm border-none font-bold text-[11px] uppercase outline-none ring-1 ring-slate-200">
                 <option value="all">🌐 ALL PROJECTS</option>
                 <option value="Project_A">COCO HUA HIN</option>
                 <option value="Project_B">THE PYNE PLUS</option>
             </select>
-            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหา HP-ID หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
+            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหารหัส หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none ring-1 ring-slate-200 text-[11px] font-bold">
         </div>
 
         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
@@ -52,15 +52,15 @@
 
     <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-[10px] border-blue-600 animate-in fade-in zoom-in duration-200">
-            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Update: <span id="editingId" class="text-blue-600 underline"></span></h2>
+            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase">🛠️ Update: <span id="editingId" class="text-blue-600 underline"></span></h2>
             <div class="space-y-4 italic">
                 <div>
                     <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">แปลง (PLOT)</label>
-                    <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]">
+                    <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px] text-slate-700 border-none shadow-inner">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-[9px] font-bold text-blue-600 ml-2">System (Live)</label>
+                        <label class="text-[9px] font-bold text-blue-600 ml-2">System</label>
                         <select id="sysStatusSelect" class="w-full p-4 bg-white border border-slate-200 rounded-xl font-bold text-[10px]">
                             <option value="Online">🟢 Online</option><option value="Pending">🟡 Pending</option><option value="Off">🔴 Off</option>
                         </select>
@@ -72,25 +72,25 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all active:scale-95 italic">
-                    <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูลเข้า MASTER
+                <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all active:scale-95">
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกเข้า MASTER
                 </button>
             </div>
         </div>
     </div>
 
     <div id="popOK" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center z-[100] backdrop-blur-xl">
-        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl">
+        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl scale-in">
             <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner"><i class="fa-solid fa-check"></i></div>
-            <h2 class="text-xl font-bold text-slate-800 mb-2 italic">บันทึกสำเร็จ!</h2>
-            <p class="text-slate-400 text-[10px] font-bold uppercase mb-8">ข้อมูลอัปเดตใน Sheet แล้ว</p>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">บันทึกสำเร็จ!</h2>
+            <p class="text-slate-400 text-[10px] font-bold uppercase mb-8">ข้อมูลอัปเดตใน Sheet เรียบร้อยแล้ว</p>
             <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px]">ตกลง</button>
         </div>
     </div>
 
     <script>
-        // 🛑 นำ URL จาก Apps Script ที่ Deploy ใหม่มาใส่ที่นี่
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
+        // 🛑 สำคัญ: ใส่ URL จาก Apps Script ที่ Deploy ใหม่ที่นี่
+        const API_URL = "https://script.google.com/macros/s/AKfycbxVnSLPQIbnJgBlOOJFKicNkBzKfiFjltdox44UAT5uIdk4GQmFvOas9FXTSWcfv2d6/exec"; 
         let masterData = [];
 
         async function init() {
@@ -98,7 +98,7 @@
             try {
                 const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}&t=${Date.now()}`);
                 masterData = await res.json(); renderTable(masterData);
-            } catch (e) { console.error(e); }
+            } catch (e) { document.getElementById('unitTableBody').innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 text-center font-bold'>Connection Error</td></tr>"; }
         }
 
         function renderTable(data) {
@@ -108,25 +108,25 @@
                     <td class="font-bold text-slate-500 italic">${u.name || '-'}</td>
                     <td class="text-center"><span class="badge ${getSysClass(u.sysStatus)}">${u.sysStatus}</span></td>
                     <td class="text-center"><span class="badge ${getUnitClass(u.unitStatus)}">${u.unitStatus}</span></td>
-                    <td class="text-center text-blue-600"><button onclick="openEdit('${u.id}','${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td class="text-center text-blue-600"><button onclick="openEdit('${u.id}','${u.name}','${u.sysStatus}','${u.unitStatus}','${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
         }
 
-        async function openEdit(id, project) {
+        // 🛠️ แก้ไข: ฟังก์ชันคลิกแล้วดึงชื่อแปลงมาใส่ให้ทันที 100%
+        function openEdit(id, name, sys, unit, project) {
             window.activeProj = project;
             document.getElementById('editingId').innerText = id;
+            document.getElementById('plotInput').value = (name === '-') ? "" : name; // ดึงชื่อแปลงมาใส่ช่อง Input ทันที
+            document.getElementById('sysStatusSelect').value = sys;
+            document.getElementById('unitStatusSelect').value = unit;
             document.getElementById('editModal').style.display = 'flex';
-            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
-            const d = await res.json();
-            document.getElementById('plotInput').value = d.ID_NAME || ""; 
-            document.getElementById('sysStatusSelect').value = d.System_Status || "Pending";
-            document.getElementById('unitStatusSelect').value = d.Status || "Available";
         }
 
         async function saveData() {
             const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> บันทึกสำเร็จแล้ว...';
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึกจริง...';
             
+            // ใช้ URLSearchParams เพื่อความเสถียรสูงสุด
             const params = new URLSearchParams();
             params.append('project', window.activeProj);
             params.append('hpId', document.getElementById('editingId').innerText);
@@ -135,9 +135,10 @@
             params.append('unitStatus', document.getElementById('unitStatusSelect').value);
 
             try {
+                // ส่งข้อมูลเข้า Apps Script
                 await fetch(API_URL, { method: 'POST', body: params });
                 document.getElementById('popOK').style.display = 'flex';
-            } catch (e) { btn.disabled = false; btn.innerText = 'Error - Try Again'; }
+            } catch (e) { btn.disabled = false; btn.innerText = 'Error - ลองอีกครั้ง'; }
         }
 
         function getSysClass(s) { return s === 'Online' ? 'bg-sys-online' : (s === 'Off' ? 'bg-sys-off' : 'bg-sys-pending'); }
