@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMART ADMIN DASHBOARD</title>
+    <title>SMART ADMIN DASHBOARD V3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #f1f5f9; }
-        .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-        /* Badge สีตามสถานะจริง */
-        .badge { font-size: 8px; padding: 3px 10px; border-radius: 99px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        body { font-family: 'Kanit', sans-serif; background: #f8fafc; }
+        .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .badge { font-size: 8px; padding: 2px 8px; border-radius: 99px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .bg-sys-online { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
         .bg-sys-pending { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
         .bg-sys-off { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
@@ -19,20 +18,22 @@
         .bg-unit-sold { background: #ef4444; color: white; }
         .bg-unit-construction { background: #f59e0b; color: white; }
         .bg-unit-reserved { background: #6366f1; color: white; }
+        .no-wrap-id { white-space: nowrap; font-size: 11px; font-weight: 700; color: #1e3a8a; }
     </style>
 </head>
 <body class="p-2 md:p-6 italic">
+
     <div class="max-w-6xl mx-auto">
         <div class="flex flex-col md:flex-row gap-2 mb-4">
-            <select id="projectSelect" onchange="init()" class="p-3 bg-white rounded-xl shadow-sm font-bold text-[11px] outline-none ring-1 ring-slate-200">
+            <select id="projectSelect" onchange="init()" class="p-3 bg-white rounded-xl shadow-sm border-none font-bold text-[11px] uppercase outline-none ring-1 ring-slate-200">
                 <option value="all">🌐 ALL PROJECTS</option>
                 <option value="Project_A">COCO HUA HIN</option>
                 <option value="Project_B">THE PYNE PLUS</option>
             </select>
-            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหารหัส หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none ring-1 ring-slate-200 text-[11px] font-bold">
+            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหา HP-ID หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none ring-1 ring-slate-200 text-[11px] font-bold">
         </div>
 
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse dense-row">
                     <thead class="bg-[#0f172a] text-white">
@@ -50,15 +51,15 @@
         </div>
     </div>
 
-    <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-[10px] border-blue-600 scale-in-center">
-            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Update Data: <span id="editingId" class="text-blue-600 underline"></span></h2>
+            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Update: <span id="editingId" class="text-blue-600 underline"></span></h2>
             <div class="space-y-4">
+                <div class="italic">
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">แปลง (PLOT)</label>
+                    <input type="text" id="plotInput" placeholder="ระบบดึงอัตโนมัติ..." class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px] text-slate-700">
+                </div>
                 <div class="grid grid-cols-2 gap-3 italic">
-                    <div class="col-span-2">
-                        <label class="text-[9px] font-bold text-slate-400 ml-2">แปลง (PLOT)</label>
-                        <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]">
-                    </div>
                     <div>
                         <label class="text-[9px] font-bold text-blue-600 ml-2">System</label>
                         <select id="sysStatusSelect" class="w-full p-4 bg-white border border-slate-200 rounded-xl font-bold text-[10px]">
@@ -77,14 +78,14 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all active:scale-95 italic">บันทึกข้อมูลเข้า MASTER</button>
+                <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all active:scale-95 italic">บันทึกเข้า MASTER</button>
             </div>
         </div>
     </div>
 
     <div id="popOK" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center z-[100] backdrop-blur-xl">
-        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl">
-            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner text-3xl"><i class="fa-solid fa-check-double"></i></div>
+        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl scale-in">
+            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-check-double"></i></div>
             <h2 class="text-xl font-bold text-slate-800 mb-2 italic">บันทึกเรียบร้อย!</h2>
             <p class="text-slate-400 text-[10px] font-bold uppercase mb-8">ข้อมูลถูกส่งเข้า Master Sheet แล้ว</p>
             <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px]">Back to Dashboard</button>
@@ -92,69 +93,69 @@
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyGoLMx7aePM8uIhW8g8Fb-rDDRsQRw66oboBNMjY4CjzC_wiXklFLXfQBkuv6PXq_j/exec"; //
+        // 🛑 ตรวจสอบ URL Apps Script ให้ถูกต้อง (ต้องมีการแก้ Code Apps Script ด้านล่างด้วย)
+        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
         let masterData = [];
 
         async function init() {
             const p = document.getElementById('projectSelect').value;
-            const tbody = document.getElementById('unitTableBody');
-            tbody.innerHTML = "<tr><td colspan='5' class='p-10 text-center animate-pulse text-blue-500 text-[10px] font-bold italic'>🔄 SYNCING LIVE DATA...</td></tr>";
-            
             try {
-                // เพิ่มตัวแปรเวลาเพื่อป้องกันการจำ Cache
                 const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}&t=${new Date().getTime()}`);
                 masterData = await res.json();
                 renderTable(masterData);
-            } catch (e) { tbody.innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 text-center font-bold'>Connection Error</td></tr>"; }
+            } catch (e) { document.getElementById('unitTableBody').innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 text-center font-bold'>Connection Error</td></tr>"; }
         }
 
         function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/40">
-                    <td class="font-bold text-slate-900 pl-4 border-l-4 border-blue-500">${u.id}</td>
+                <tr class="hover:bg-blue-50/40 transition-colors">
+                    <td class="font-bold text-slate-900 pl-4 border-l-4 border-blue-500 italic">${u.id}</td>
                     <td class="font-bold text-slate-500 italic">${u.name || '-'}</td>
-                    <td class="text-center"><span class="badge ${getSysClass(u.sysStatus)}">${u.sysStatus}</span></td>
-                    <td class="text-center"><span class="badge ${getUnitClass(u.unitStatus)}">${u.unitStatus}</span></td>
-                    <td class="text-center"><button onclick="openEdit('${u.id}','${u.project}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td class="text-center"><span class="badge ${getSysClass(u.sysStatus)}">${u.sysStatus || 'PND'}</span></td>
+                    <td class="text-center"><span class="badge ${getUnitClass(u.unitStatus)}">${u.unitStatus || 'N/A'}</span></td>
+                    <td class="text-center text-blue-600"><button onclick="openEdit('${u.id}','${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
         }
 
-        function getSysClass(s) {
-            if (s === 'Online') return 'bg-sys-online';
-            if (s === 'Off') return 'bg-sys-off';
-            return 'bg-sys-pending';
-        }
-
+        function getSysClass(s) { return s === 'Online' ? 'bg-sys-online' : (s === 'Off' ? 'bg-sys-off' : 'bg-sys-pending'); }
         function getUnitClass(s) {
             const map = { 'Available': 'bg-unit-available', 'Sold': 'bg-unit-sold', 'Under Construction': 'bg-unit-construction', 'Reserved': 'bg-unit-reserved' };
             return map[s] || 'bg-slate-100 text-slate-400';
         }
 
         async function openEdit(id, project) {
-            window.currentProj = project;
-            document.getElementById('editingId').innerText = id; document.getElementById('editModal').style.display = 'flex';
+            window.activeProj = project;
+            document.getElementById('editingId').innerText = id;
+            document.getElementById('editModal').style.display = 'flex';
+            
             const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
             const d = await res.json();
-            document.getElementById('plotInput').value = d.ID_NAME || "";
+            
+            // 🛠️ แก้ไข: ระบบ Auto-Fill Plot Name ทันที
+            document.getElementById('plotInput').value = d.ID_NAME || ""; 
             document.getElementById('sysStatusSelect').value = d.System_Status || "Pending";
             document.getElementById('unitStatusSelect').value = d.Status || "Available";
         }
 
         async function saveData() {
             const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.style.background = "#2563eb"; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> บันทึกสำเร็จแล้ว...';
+            btn.disabled = true; btn.style.background = "#2563eb"; 
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังซิงค์ข้อมูลกับชีท...';
+            
             const payload = {
-                project: window.currentProj,
+                project: window.activeProj,
                 hpId: document.getElementById('editingId').innerText,
-                idName: document.getElementById('plotInput').value,
-                sysStatus: document.getElementById('sysStatusSelect').value,
-                unitStatus: document.getElementById('unitStatusSelect').value,
-                files: []
+                idName: document.getElementById('plotInput').value, // บันทึกเข้า ID_NAME
+                sysStatus: document.getElementById('sysStatusSelect').value, // บันทึกเข้า System_Status
+                unitStatus: document.getElementById('unitStatusSelect').value, // บันทึกเข้า Status
+                action: "updateMaster" // กำหนด Action ให้ชัดเจน
             };
+
             try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                // ส่งข้อมูลแบบ POST และระบุพารามิเตอร์ให้ถูกต้อง
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 document.getElementById('popOK').style.display = 'flex';
-            } catch (e) { btn.disabled = false; btn.innerText = 'Error - Try Again'; }
+            } catch (e) { btn.disabled = false; btn.innerText = 'Error - ลองอีกครั้ง'; }
         }
 
         function localSearch() {
