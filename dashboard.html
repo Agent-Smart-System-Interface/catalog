@@ -8,126 +8,120 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #f1f5f9; }
-        .dense-row td { padding: 4px 8px !important; line-height: 1.2; border-bottom: 1px solid #f1f5f9; }
-        .dense-row th { padding: 8px !important; font-size: 10px !important; text-transform: uppercase; }
+        body { font-family: 'Kanit', sans-serif; background: #f8fafc; color: #1e293b; }
+        .dense-row td { padding: 0.4rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .dense-row th { padding: 0.6rem !important; font-size: 10px !important; text-transform: uppercase; white-space: nowrap; }
+        .no-wrap-id { white-space: nowrap; font-size: 11px; letter-spacing: -0.02em; }
+        .status-badge { font-size: 8px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
+        .truncate-text { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="p-2 md:p-6">
-
+<body class="p-2 md:p-6 italic">
     <div class="max-w-5xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-            <h1 class="text-xl font-bold text-slate-800 italic uppercase">Master <span class="text-blue-600">Hub Control</span></h1>
-            
-            <div class="flex gap-2 w-full md:w-auto">
-                <select id="projectSelect" onchange="fetchData()" class="flex-1 md:w-48 p-2 bg-white rounded-lg shadow-sm border-none text-[11px] font-bold uppercase outline-none">
-                    <option value="all">🌐 All Projects (A, B, C, D)</option>
-                    <option value="Project_A">CoCo (Project A)</option>
-                    <option value="Project_B">The Pyne (Project B)</option>
-                    <option value="Project_D">Unit Project D</option>
+        <div class="flex flex-col md:flex-row gap-2 mb-4">
+            <div class="flex-1 flex gap-2">
+                <select id="projectSelect" onchange="init()" class="p-2 bg-white rounded-xl shadow-sm border-none font-bold text-[10px] uppercase outline-none ring-1 ring-slate-200">
+                    <option value="all">🌐 ALL PROJECTS</option>
+                    <option value="Project_A">COCO HUA HIN</option>
+                    <option value="Project_B">THE PYNE PLUS</option>
                 </select>
-                <input type="text" id="searchInput" oninput="localFilter()" placeholder="🔍 ค้นหารหัส/ชื่อ..." class="flex-1 md:w-44 p-2 bg-white rounded-lg shadow-sm border-none text-[11px] font-bold outline-none">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส/แปลง..." class="w-full pl-8 pr-3 py-2.5 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse dense-row">
-                    <thead class="bg-slate-900 text-white uppercase text-[9px] italic">
-                        <tr>
-                            <th>ID</th>
-                            <th>Property Name</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Edit</th>
+                    <thead class="bg-slate-900 text-white">
+                        <tr class="uppercase text-[9px] tracking-widest italic">
+                            <th class="w-[28%] pl-4">ID</th> 
+                            <th class="w-[37%]">Plot Name</th>
+                            <th class="w-[20%] text-center">Status</th>
+                            <th class="w-[15%] text-center">Manage</th>
                         </tr>
                     </thead>
-                    <tbody id="unitTableBody" class="text-slate-600 text-[11px] font-medium">
-                        <tr><td colspan="4" class="p-10 text-center animate-pulse">⏳ กำลังซิงค์ข้อมูล MASTER...</td></tr>
-                    </tbody>
+                    <tbody id="unitTableBody" class="text-[11px] font-medium"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl border-t-8 border-blue-600 animate-in fade-in zoom-in duration-150">
-            <h2 class="text-lg font-bold text-slate-800 mb-6 italic uppercase">🛠️ Edit: <span id="editingId" class="text-blue-600"></span></h2>
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-blue-600 animate-in fade-in zoom-in duration-200">
+            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic">🛠️ Master Update: <span id="editingId" class="text-blue-600"></span></h2>
             <div class="space-y-4">
-                <input type="text" id="idName" class="w-full p-4 bg-slate-50 rounded-xl outline-none shadow-inner border-none font-bold text-xs">
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">แปลง (Plot)</label>
+                    <input type="text" id="idName" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]">
+                </div>
+                <div>
+                    <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">ที่อยู่ (Address)</label>
+                    <input type="text" id="plot" class="w-full p-4 bg-slate-50 rounded-xl outline-none text-[11px]">
+                </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <input type="number" id="price" class="p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none border-none shadow-inner text-sm">
-                    <select id="sysStatus" class="p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none">
-                        <option value="Live">🟢 Live</option>
-                        <option value="Pending">🟡 Pending</option>
-                        <option value="Sold">🔴 Sold</option>
-                    </select>
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">ราคา (Price)</label>
+                        <input type="number" id="price" class="p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm w-full">
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">สถานะ</label>
+                        <select id="sysStatus" class="p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none w-full">
+                            <option value="Live">🟢 Online</option>
+                            <option value="Pending">🟡 Pending</option>
+                            <option value="Sold">🔴 Sold</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="flex gap-2 mt-6">
-                    <button onclick="closeEdit()" class="flex-1 py-4 text-slate-400 text-[10px] font-bold uppercase hover:bg-slate-50 rounded-2xl">ยกเลิก</button>
-                    <button onclick="saveData()" id="btnSave" class="flex-[2] bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase text-[10px] shadow-lg hover:bg-blue-600 transition-all italic">บันทึกข้อมูล</button>
-                </div>
+                <button onclick="saveData()" id="btnSave" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg hover:bg-blue-600 transition-all mt-4">บันทึกเข้า Master</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 🛑 พี่ต้องเอา URL ของพี่มาใส่ตรงนี้ครับ
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec"; 
-        let cacheData = [];
-
-        async function fetchData() {
-            const proj = document.getElementById('projectSelect').value;
-            const tbody = document.getElementById('unitTableBody');
-            try {
-                const res = await fetch(`${API_URL}?mode=getUnitList&project=${proj}`);
-                cacheData = await res.json();
-                render(cacheData);
-            } catch (e) { tbody.innerHTML = "<tr><td colspan='4' class='p-10 text-center text-red-500'>⚠️ Connection Error</td></tr>"; }
+        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec";
+        let masterData = [];
+        async function init() {
+            const p = document.getElementById('projectSelect').value;
+            const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}`);
+            masterData = await res.json();
+            renderTable(masterData);
         }
-
-        function render(data) {
+        function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/50 transition-colors">
-                    <td class="font-bold text-slate-900">${u.id || '-'}</td>
-                    <td class="font-bold text-slate-500">${u.name || '-'}</td>
-                    <td class="text-center italic"><span class="px-2 py-0.5 rounded-full text-[8px] font-bold uppercase ${getStyle(u.status)}">${u.status || 'PND'}</span></td>
-                    <td class="text-center"><button onclick="openEdit('${u.id}', '${u.project}')" class="text-blue-500 hover:text-blue-700 p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                <tr class="hover:bg-blue-50/50">
+                    <td class="font-bold text-slate-900 no-wrap-id pl-4">${u.id}</td>
+                    <td class="font-bold text-slate-500 truncate-text">${u.name || '-'}</td>
+                    <td class="text-center"><span class="${getStatusStyle(u.status)} status-badge">${u.status || 'PND'}</span></td>
+                    <td class="text-center text-blue-500"><button onclick="openEdit('${u.id}', '${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
         }
-
-        function getStyle(s) {
-            if (s === 'Live') return 'bg-green-100 text-green-600';
-            if (s === 'Sold') return 'bg-red-100 text-red-600';
-            return 'bg-yellow-100 text-yellow-600';
-        }
-
-        function localFilter() {
-            const t = document.getElementById('searchInput').value.toUpperCase();
-            render(cacheData.filter(u => u.id.toUpperCase().includes(t) || (u.name && u.name.toUpperCase().includes(t))));
-        }
-
-        async function openEdit(id, proj) {
-            window.targetProj = proj;
+        async function openEdit(id, project) {
+            window.activeProj = project;
             document.getElementById('editingId').innerText = id;
-            document.getElementById('editModal').classList.replace('hidden', 'flex');
-            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${proj}&hpId=${id}`);
+            document.getElementById('editModal').style.display = 'flex';
+            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
             const d = await res.json();
-            document.getElementById('idName').value = d.ID_NAME || "";
+            document.getElementById('idName').value = d.ID_NAME || ""; // ตอนนี้หมายถึง Plot
+            document.getElementById('plot').value = d.Plot || ""; // ตอนนี้หมายถึง Address
             document.getElementById('price').value = d.Price || 0;
             document.getElementById('sysStatus').value = d.System_Status || "Pending";
         }
-
-        function closeEdit() { document.getElementById('editModal').classList.replace('flex', 'hidden'); }
-
+        function localSearch() {
+            const term = document.getElementById('searchInput').value.toUpperCase();
+            renderTable(masterData.filter(u => u.id.toUpperCase().includes(term) || (u.name && u.name.toUpperCase().includes(term))));
+        }
+        function getStatusStyle(s) { return s === 'Live' ? 'bg-green-100 text-green-600' : (s === 'Sold' ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-600'); }
+        function closeEdit() { document.getElementById('editModal').style.display = 'none'; }
         async function saveData() {
             const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.innerText = 'บันทึกสำเร็จ...';
-            const payload = { project: window.targetProj, hpId: document.getElementById('editingId').innerText, idName: document.getElementById('idName').value, price: document.getElementById('price').value, sysStatus: document.getElementById('sysStatus').value };
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            closeEdit(); fetchData();
+            btn.disabled = true; btn.innerText = 'บันทึก...';
+            const payload = { project: window.activeProj, hpId: document.getElementById('editingId').innerText, idName: document.getElementById('idName').value, plot: document.getElementById('plot').value, price: document.getElementById('price').value, sysStatus: document.getElementById('sysStatus').value, files: [] };
+            try { await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }); closeEdit(); init(); } catch (e) { btn.disabled = false; }
         }
-
-        window.onload = fetchData;
+        window.onload = init;
     </script>
 </body>
 </html>
