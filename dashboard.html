@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Kanit', sans-serif; background: #f8fafc; color: #1e293b; }
-        .dense-row td { padding: 0.4rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         .dense-row th { padding: 0.6rem !important; font-size: 10px !important; text-transform: uppercase; white-space: nowrap; }
         .no-wrap-id { white-space: nowrap; font-size: 11px; letter-spacing: -0.02em; }
         .status-badge { font-size: 8px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
@@ -17,6 +17,7 @@
     </style>
 </head>
 <body class="p-2 md:p-6 italic">
+
     <div class="max-w-5xl mx-auto">
         <div class="flex flex-col md:flex-row gap-2 mb-4">
             <div class="flex-1 flex gap-2">
@@ -27,7 +28,7 @@
                 </select>
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-300 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหารหัส/แปลง..." class="w-full pl-8 pr-3 py-2.5 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
+                    <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหา HP-ID หรือ ชื่อแปลง..." class="w-full pl-8 pr-3 py-2.5 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
                 </div>
             </div>
         </div>
@@ -35,8 +36,8 @@
         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse dense-row">
-                    <thead class="bg-slate-900 text-white">
-                        <tr class="uppercase text-[9px] tracking-widest italic">
+                    <thead class="bg-slate-900 text-white italic">
+                        <tr class="uppercase text-[9px] tracking-widest">
                             <th class="w-[28%] pl-4">ID</th> 
                             <th class="w-[37%]">Plot Name</th>
                             <th class="w-[20%] text-center">Status</th>
@@ -62,18 +63,12 @@
                     <input type="text" id="plot" class="w-full p-4 bg-slate-50 rounded-xl outline-none text-[11px]">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">ราคา (Price)</label>
-                        <input type="number" id="price" class="p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm w-full">
-                    </div>
-                    <div>
-                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-2">สถานะ</label>
-                        <select id="sysStatus" class="p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none w-full">
-                            <option value="Live">🟢 Online</option>
-                            <option value="Pending">🟡 Pending</option>
-                            <option value="Sold">🔴 Sold</option>
-                        </select>
-                    </div>
+                    <input type="number" id="price" placeholder="ราคา" class="p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm w-full">
+                    <select id="sysStatus" class="p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none w-full">
+                        <option value="Live">🟢 Online</option>
+                        <option value="Pending">🟡 Pending</option>
+                        <option value="Sold">🔴 Sold</option>
+                    </select>
                 </div>
                 <button onclick="saveData()" id="btnSave" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase text-[10px] tracking-widest shadow-lg hover:bg-blue-600 transition-all mt-4">บันทึกเข้า Master</button>
             </div>
@@ -91,7 +86,7 @@
         }
         function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/50">
+                <tr class="hover:bg-blue-50/50 transition-colors">
                     <td class="font-bold text-slate-900 no-wrap-id pl-4">${u.id}</td>
                     <td class="font-bold text-slate-500 truncate-text">${u.name || '-'}</td>
                     <td class="text-center"><span class="${getStatusStyle(u.status)} status-badge">${u.status || 'PND'}</span></td>
@@ -104,8 +99,8 @@
             document.getElementById('editModal').style.display = 'flex';
             const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
             const d = await res.json();
-            document.getElementById('idName').value = d.ID_NAME || ""; // ตอนนี้หมายถึง Plot
-            document.getElementById('plot').value = d.Plot || ""; // ตอนนี้หมายถึง Address
+            document.getElementById('idName').value = d.ID_NAME || "";
+            document.getElementById('plot').value = d.Plot || "";
             document.getElementById('price').value = d.Price || 0;
             document.getElementById('sysStatus').value = d.System_Status || "Pending";
         }
