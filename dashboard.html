@@ -1,161 +1,37 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MASTER HUB DASHBOARD</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body { font-family: 'Kanit', sans-serif; background: #f8fafc; }
-        .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
-        .dense-row th { padding: 0.6rem !important; font-size: 10px !important; text-transform: uppercase; white-space: nowrap; }
-        .no-wrap-id { white-space: nowrap; font-size: 11px; font-weight: 700; color: #1e3a8a; }
-        .status-badge { font-size: 9px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; white-space: nowrap; border-width: 1px; }
-    </style>
-</head>
-<body class="p-2 md:p-6 italic">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row gap-2 mb-4">
-            <select id="projectSelect" onchange="init()" class="p-2 bg-white rounded-xl shadow-sm border-none font-bold text-[10px] uppercase outline-none ring-1 ring-slate-200">
-                <option value="all">🌐 ALL PROJECTS</option>
-                <option value="Project_A">COCO HUA HIN</option>
-                <option value="Project_B">THE PYNE PLUS</option>
-            </select>
-            <input type="text" id="searchInput" oninput="localSearch()" placeholder="ค้นหา HP-ID หรือ แปลง..." class="flex-1 pl-4 pr-3 py-2.5 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse dense-row">
-                    <thead class="bg-slate-900 text-white italic">
-                        <tr class="uppercase text-[9px] tracking-widest">
-                            <th class="w-[15%] pl-4">HP-ID</th>
-                            <th class="w-[30%]">Plot Name</th>
-                            <th class="w-[15%] text-center">System</th>
-                            <th class="w-[25%] text-center">Unit Status</th>
-                            <th class="w-[15%] text-center">Edit</th>
-                        </tr>
-                    </thead>
-                    <tbody id="unitTableBody" class="text-[11px]">
-                        <tr><td colspan="5" class="p-10 text-center animate-pulse">🔄 Syncing Master Data...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border-t-8 border-blue-600 animate-in fade-in zoom-in duration-200">
-            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase">🛠️ Master Update: <span id="editingId" class="text-blue-600"></span></h2>
-            <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">แปลง (PLOT)</label><input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px]"></div>
-                    <div><label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">ราคา (PRICE)</label><input type="number" id="priceInput" class="w-full p-4 bg-blue-50 text-blue-700 font-bold rounded-xl outline-none text-sm"></div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[9px] font-bold text-blue-600 ml-2 uppercase italic">System Status</label>
-                        <select id="sysStatusSelect" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none cursor-pointer">
-                            <option value="Online">🟢 Online</option><option value="Pending">🟡 Pending</option><option value="Off">🔴 Off</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[9px] font-bold text-orange-600 ml-2 uppercase italic">Unit Status</label>
-                        <select id="unitStatusSelect" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px] outline-none cursor-pointer">
-                            <option value="Available">Available</option><option value="Under Construction">Under Con</option><option value="Reserved">Reserved</option><option value="Sold">Sold</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all mt-4 active:scale-95 italic">
-                    <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกเข้า Master
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="popOK" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center z-[100] backdrop-blur-md">
-        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center shadow-2xl border-t-8 border-green-500 scale-in">
-            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner text-3xl"><i class="fa-solid fa-check"></i></div>
-            <h2 class="text-xl font-bold text-slate-800 mb-2 italic">บันทึกสำเร็จ!</h2>
-            <p class="text-slate-400 text-[10px] font-bold mb-8 uppercase tracking-widest">ข้อมูลถูกบันทึกลง Sheet แล้ว</p>
-            <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px]">ตกลง</button>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxO40_bOBK66N22L6AWzBWaagzNkxSXs4KuvY5hRZ3vE4miazrpn7iNttlgmtGERmXV/exec";
-        let masterData = [];
-
-        async function init() {
-            const p = document.getElementById('projectSelect').value;
-            try {
-                const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}`);
-                masterData = await res.json(); renderTable(masterData);
-            } catch (e) { document.getElementById('unitTableBody').innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 text-center font-bold'>Connection Error</td></tr>"; }
+function doGet(e) {
+  var mode = e.parameter.mode;
+  var project = e.parameter.project;
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  
+  if (mode === "getUnitList") {
+    var allData = [];
+    var sheetNames = (project === "all") ? ["Project_A", "Project_B", "Project_Master"] : [project];
+    
+    sheetNames.forEach(function(name) {
+      var sheet = ss.getSheetByName(name);
+      if (sheet) {
+        var values = sheet.getDataRange().getValues();
+        var headers = values[0]; // แถวที่ 1 คือหัวข้อ
+        
+        // ค้นหาตำแหน่งคอลัมน์แบบไดนามิก
+        var idxID = headers.indexOf("HP_ID");
+        var idxName = headers.indexOf("ID_NAME");
+        var idxSys = headers.indexOf("System_Status"); // หาคอลัมน์ System
+        var idxUnit = headers.indexOf("Status"); // หาคอลัมน์ Unit Status
+        
+        for (var i = 1; i < values.length; i++) {
+          if (values[i][idxID]) {
+            allData.push({
+              id: values[i][idxID],
+              name: values[i][idxName],
+              sysStatus: values[i][idxSys] || "Pending", // ดึงข้อมูล System
+              unitStatus: values[i][idxUnit] || "Available", // ดึงข้อมูล Unit Status
+              project: name
+            });
+          }
         }
-
-        function renderTable(data) {
-            document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/50 transition-colors">
-                    <td class="no-wrap-id pl-4">${u.id}</td><td>${u.name || '-'}</td>
-                    <td class="text-center"><span class="${getSysColor(u.sysStatus)} status-badge">${u.sysStatus || 'PND'}</span></td>
-                    <td class="text-center"><span class="${getUnitColor(u.unitStatus)} status-badge">${u.unitStatus || 'N/A'}</span></td>
-                    <td class="text-center text-blue-500"><button onclick="openEdit('${u.id}', '${u.project}')" class="p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
-                </tr>`).join('');
-        }
-
-        function getSysColor(s) {
-            if (s === 'Online') return 'bg-green-100 text-green-600 border-green-200';
-            if (s === 'Off') return 'bg-red-100 text-red-600 border-red-200';
-            return 'bg-yellow-100 text-yellow-600 border-yellow-200';
-        }
-
-        function getUnitColor(s) {
-            if (s === 'Available') return 'bg-green-50 text-green-700 border-green-200';
-            if (s === 'Sold') return 'bg-red-50 text-red-700 border-red-200';
-            if (s === 'Under Construction') return 'bg-orange-50 text-orange-700 border-orange-200';
-            return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-        }
-
-        async function openEdit(id, project) {
-            window.activeProj = project;
-            document.getElementById('editingId').innerText = id; document.getElementById('editModal').style.display = 'flex';
-            const res = await fetch(`${API_URL}?mode=getUnitDetail&project=${project}&hpId=${id}`);
-            const d = await res.json();
-            document.getElementById('plotInput').value = d.ID_NAME || "";
-            document.getElementById('priceInput').value = d.Price || 0;
-            document.getElementById('sysStatusSelect').value = d.System_Status || "Pending";
-            document.getElementById('unitStatusSelect').value = d.Status || "Available";
-        }
-
-        function localSearch() {
-            const t = document.getElementById('searchInput').value.toUpperCase();
-            renderTable(masterData.filter(u => u.id.toUpperCase().includes(t) || (u.name && u.name.toUpperCase().includes(t))));
-        }
-
-        function closeEdit() { document.getElementById('editModal').style.display = 'none'; }
-
-        async function saveData() {
-            const btn = document.getElementById('btnSave');
-            btn.disabled = true; 
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึก...';
-            const payload = {
-                project: window.activeProj,
-                hpId: document.getElementById('editingId').innerText,
-                idName: document.getElementById('plotInput').value,
-                price: document.getElementById('priceInput').value,
-                sysStatus: document.getElementById('sysStatusSelect').value,
-                unitStatus: document.getElementById('unitStatusSelect').value,
-                files: []
-            };
-            try {
-                await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                document.getElementById('popOK').style.display = 'flex';
-            } catch (e) { btn.disabled = false; btn.innerText = 'บันทึกเข้า Master'; }
-        }
-        window.onload = init;
-    </script>
-</body>
-</html>
+      }
+    });
+    return ContentService.createTextOutput(JSON.stringify(allData)).setMimeType(ContentService.MimeType.JSON);
+  }
+}
