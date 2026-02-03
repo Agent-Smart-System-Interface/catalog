@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MASTER DASHBOARD V6.0</title>
+    <title>MASTER TEMPLATE DASHBOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Kanit', sans-serif; background: #f8fafc; }
-        .dense-row td { padding: 0.5rem 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .dense-row td { padding: 0.6rem !important; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         .badge { font-size: 8px; padding: 3px 10px; border-radius: 99px; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        /* สีสถานะตามความเหมาะสม */
         .bg-sys-online { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-        .bg-sys-off { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
         .bg-sys-pending { background: #fef9c3; color: #854d0e; border-color: #fef08a; }
+        .bg-sys-off { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
         .bg-unit-available { background: #10b981; color: white; }
         .bg-unit-sold { background: #ef4444; color: white; }
-        .bg-unit-construction { background: #f59e0b; color: white; }
-        .bg-unit-reserved { background: #6366f1; color: white; }
+        .bg-unit-con { background: #f59e0b; color: white; }
     </style>
 </head>
-<body class="p-2 md:p-6 italic">
+<body class="p-2 md:p-6 italic font-medium">
 
     <div class="max-w-6xl mx-auto">
-        <div class="flex flex-col md:flex-row gap-2 mb-4">
-            <select id="projectSelect" onchange="init()" class="p-3 bg-white rounded-xl shadow-sm border-none font-bold text-[11px] uppercase outline-none ring-1 ring-slate-200">
-                <option value="all">🌐 ALL PROJECTS</option>
-                <option value="Project_A">COCO HUA HIN</option>
-                <option value="Project_B">THE PYNE PLUS</option>
-            </select>
-            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหา HP-ID หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none ring-1 ring-slate-200 text-[11px] font-bold">
+        <div class="flex gap-2 mb-4">
+            <div class="bg-white px-4 py-3 rounded-xl shadow-sm border border-blue-100 flex items-center min-w-fit">
+                <span class="text-blue-700 font-bold text-[10px] uppercase tracking-tighter">🏠 PROJECT MASTER HUB</span>
+            </div>
+            <input type="text" id="searchInput" oninput="localSearch()" placeholder="🔍 ค้นหา HP-ID หรือ แปลง..." class="flex-1 p-3 bg-white rounded-xl shadow-sm outline-none border-none ring-1 ring-slate-200 text-[11px] font-bold">
         </div>
 
         <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-100">
@@ -52,105 +50,94 @@
 
     <div id="editModal" onclick="if(event.target==this) closeEdit()" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl border-t-[10px] border-blue-600 animate-in fade-in zoom-in duration-200">
-            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase">🛠️ Update: <span id="editingId" class="text-blue-600 underline"></span></h2>
+            <h2 class="text-sm font-bold text-slate-800 mb-6 uppercase italic underline">🛠️ Master Edit: <span id="editingId"></span></h2>
             <div class="space-y-4">
                 <div>
                     <label class="text-[9px] font-bold text-slate-400 uppercase ml-2 italic">แปลง (PLOT)</label>
-                    <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px] text-slate-700 border-none shadow-inner">
+                    <input type="text" id="plotInput" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold text-[11px] border-none shadow-inner">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-3 italic">
                     <div>
                         <label class="text-[9px] font-bold text-blue-600 ml-2">System (Live)</label>
-                        <select id="sysStatusSelect" class="w-full p-4 bg-white border border-slate-200 rounded-xl font-bold text-[10px]">
+                        <select id="sysSelect" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px]">
                             <option value="Online">🟢 Online</option><option value="Pending">🟡 Pending</option><option value="Off">🔴 Off</option>
                         </select>
                     </div>
                     <div>
                         <label class="text-[9px] font-bold text-orange-600 ml-2">Unit Status</label>
-                        <select id="unitStatusSelect" class="w-full p-4 bg-white border border-slate-200 rounded-xl font-bold text-[10px]">
+                        <select id="unitSelect" class="w-full p-4 bg-white border border-slate-100 rounded-xl font-bold text-[10px]">
                             <option value="Available">Available</option><option value="Under Construction">Under Con</option><option value="Sold">Sold</option><option value="Reserved">Reserved</option>
                         </select>
                     </div>
                 </div>
                 <button onclick="saveData()" id="btnSave" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase text-[10px] tracking-widest shadow-xl hover:bg-slate-900 transition-all active:scale-95 italic">
-                    <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกเข้า MASTER
+                    <i class="fa-solid fa-floppy-disk mr-2"></i> บันทึกข้อมูลเข้าชีท Master
                 </button>
             </div>
         </div>
     </div>
 
     <div id="popOK" class="fixed inset-0 bg-slate-900/80 hidden items-center justify-center z-[100] backdrop-blur-xl">
-        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl scale-in">
-            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner"><i class="fa-solid fa-check-double"></i></div>
-            <h2 class="text-xl font-bold text-slate-800 mb-2">บันทึกสำเร็จ!</h2>
-            <p class="text-slate-400 text-[10px] font-bold uppercase mb-8 italic">ข้อมูลใน Sheet เปลี่ยนแปลงแล้ว</p>
-            <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px]">Back to Dashboard</button>
+        <div class="bg-white rounded-[3rem] p-10 max-w-xs w-full text-center border-t-8 border-green-500 shadow-2xl">
+            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner"><i class="fa-solid fa-check"></i></div>
+            <h2 class="text-xl font-bold text-slate-800 mb-2">สำเร็จ!</h2>
+            <p class="text-slate-400 text-[10px] font-bold uppercase mb-8">ข้อมูลอัปเดตในชีท Master แล้ว</p>
+            <button onclick="location.reload()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-[10px]">ตกลง</button>
         </div>
     </div>
 
     <script>
-        // 🛑 ใส่ URL ที่ได้จาก New Deployment ล่าสุด
-        const API_URL = "https://script.google.com/macros/s/AKfycbyxj74eWAp8j-woDRPSOh-V0p2LHQmqPhKw4VyaKUawiZMbC204wsLMz4dJn2MGpdwt/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbyBi7QLOwwUV9oS1bK2skQc0ZUxR5sx81h0I07Nz0hl3rS9Ax2eEseCrSYvCZ7gEpfq/exec";
         let masterData = [];
 
         async function init() {
-            const p = document.getElementById('projectSelect').value;
             try {
-                const res = await fetch(`${API_URL}?mode=getUnitList&project=${p}&t=${Date.now()}`);
+                const res = await fetch(`${API_URL}?mode=getUnitList&t=${Date.now()}`);
                 masterData = await res.json(); renderTable(masterData);
-            } catch (e) { document.getElementById('unitTableBody').innerHTML = "<tr><td colspan='5' class='p-10 text-red-500 text-center font-bold'>⚠️ Connection Error</td></tr>"; }
+            } catch (e) { document.getElementById('unitTableBody').innerHTML = "<tr><td colspan='5' class='p-10 text-center'>Connection Error</td></tr>"; }
         }
 
         function renderTable(data) {
             document.getElementById('unitTableBody').innerHTML = data.map(u => `
-                <tr class="hover:bg-blue-50/40 transition-colors italic">
-                    <td class="font-bold text-slate-900 pl-4 border-l-4 border-blue-500">${u.id}</td>
+                <tr class="hover:bg-blue-50/40 transition-colors">
+                    <td class="font-bold text-slate-900 pl-4 border-l-4 border-blue-500 italic">${u.id}</td>
                     <td class="font-bold text-slate-500">${u.plot || '-'}</td>
                     <td class="text-center"><span class="badge ${getSysClass(u.sysStatus)}">${u.sysStatus}</span></td>
                     <td class="text-center"><span class="badge ${getUnitClass(u.unitStatus)}">${u.unitStatus}</span></td>
-                    <td class="text-center text-blue-600"><button onclick="openEdit('${u.id}','${u.plot}','${u.sysStatus}','${u.unitStatus}','${u.project}')" class="p-2 hover:bg-blue-50 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button></td>
+                    <td class="text-center"><button onclick="openEdit('${u.id}','${u.plot}','${u.sysStatus}','${u.unitStatus}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen-to-square"></i></button></td>
                 </tr>`).join('');
         }
 
-        // 🛠️ แก้ไข: ฟังก์ชันคลิกแล้วดึงค่า Plot มาแสดงผลอัตโนมัติทันที
-        function openEdit(id, plot, sys, unit, project) {
-            window.activeProj = project;
+        function openEdit(id, plot, sys, unit) {
             document.getElementById('editingId').innerText = id;
-            document.getElementById('plotInput').value = (plot === '-' || plot === 'undefined') ? "" : plot;
-            document.getElementById('sysStatusSelect').value = sys;
-            document.getElementById('unitStatusSelect').value = unit;
+            document.getElementById('plotInput').value = plot === '-' ? "" : plot;
+            document.getElementById('sysSelect').value = sys;
+            document.getElementById('unitSelect').value = unit;
             document.getElementById('editModal').style.display = 'flex';
         }
 
         async function saveData() {
-            const btn = document.getElementById('btnSave');
-            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึกจริง...';
+            const btn = document.getElementById('btnSave'); btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> บันทึกสำเร็จแล้ว...';
             
-            // 🛠️ แก้ไข: ใช้ FormData เพื่อส่งข้อมูลเข้า Apps Script ได้โดยตรง 100%
-            const formData = new FormData();
-            formData.append('project', window.activeProj);
-            formData.append('hpId', document.getElementById('editingId').innerText);
-            formData.append('plotName', document.getElementById('plotInput').value);
-            formData.append('sysStatus', document.getElementById('sysStatusSelect').value);
-            formData.append('unitStatus', document.getElementById('unitStatusSelect').value);
+            const params = new URLSearchParams();
+            params.append('hpId', document.getElementById('editingId').innerText);
+            params.append('plotName', document.getElementById('plotInput').value);
+            params.append('sysStatus', document.getElementById('sysSelect').value);
+            params.append('unitStatus', document.getElementById('unitSelect').value);
 
             try {
-                // ส่งผ่าน POST แบบ multipart/form-data
-                await fetch(API_URL, { method: 'POST', body: formData });
+                await fetch(API_URL, { method: 'POST', body: params });
                 document.getElementById('popOK').style.display = 'flex';
             } catch (e) { btn.disabled = false; btn.innerText = 'Error - ลองใหม่'; }
         }
 
         function getSysClass(s) { return s === 'Online' ? 'bg-sys-online' : (s === 'Off' ? 'bg-sys-off' : 'bg-sys-pending'); }
         function getUnitClass(s) {
-            const map = { 'Available': 'bg-unit-available', 'Sold': 'bg-unit-sold', 'Under Construction': 'bg-unit-construction', 'Reserved': 'bg-unit-reserved' };
+            const map = { 'Available': 'bg-unit-available', 'Sold': 'bg-unit-sold', 'Under Construction': 'bg-unit-con' };
             return map[s] || 'bg-slate-100 text-slate-400';
         }
         function closeEdit() { document.getElementById('editModal').style.display = 'none'; }
-        function localSearch() {
-            const t = document.getElementById('searchInput').value.toUpperCase();
-            renderTable(masterData.filter(u => u.id.toUpperCase().includes(t) || (u.plot && u.plot.toUpperCase().includes(t))));
-        }
         window.onload = init;
     </script>
 </body>
